@@ -2,25 +2,22 @@ using UnityEngine;
 
 public class Hazard : MonoBehaviour
 {
-    [Header("Settings")]
-    public string playerTag = "Player"; // make sure your player GameObject is tagged "Player"
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Check if the object that entered is the player
-        if (collision.CompareTag(playerTag))
+        // Try PLAYER
+        PlayerDeath player = collision.GetComponent<PlayerDeath>();
+        if (player != null)
         {
-            // Try to get the PlayerDeath script from the player
-            PlayerDeath playerDeath = collision.GetComponent<PlayerDeath>();
+            player.Die();
+            return;
+        }
 
-            if (playerDeath != null)
-            {
-                playerDeath.Die(); // call the death method
-            }
-            else
-            {
-                Debug.LogWarning("PlayerDeath script not found on Player!");
-            }
+        // Try ENEMY
+        EnemyDeath enemy = collision.GetComponent<EnemyDeath>();
+        if (enemy != null)
+        {
+            enemy.Die();
+            return;
         }
     }
 }

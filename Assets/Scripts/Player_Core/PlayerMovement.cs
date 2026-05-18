@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CatMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D body;
     private Animator anim;

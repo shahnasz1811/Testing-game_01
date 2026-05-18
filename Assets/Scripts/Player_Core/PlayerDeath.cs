@@ -17,7 +17,7 @@ public class PlayerDeath : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // If player touches hazard or death zone
-        if (collision.CompareTag("Hazard") || collision.CompareTag("DeathZone") || collision.CompareTag("DeathZone"))
+        if (collision.CompareTag("Hazard") || collision.CompareTag("DeathZone") || collision.CompareTag("Enemy"))
         {
             Die();
         }
@@ -34,10 +34,12 @@ public class PlayerDeath : MonoBehaviour
         body.bodyType = RigidbodyType2D.Kinematic;
 
         // Tell movement script to stop
-        GetComponent<CatMovement>().enabled = false;
+        GetComponent<PlayerMovement>().enabled = false;
 
         // Respawn after short delay
         Invoke(nameof(Respawn), 1f);
+
+        GameManager.instance.ResetEnemies();
     }
 
     private void Respawn()
@@ -49,6 +51,6 @@ public class PlayerDeath : MonoBehaviour
         body.bodyType = RigidbodyType2D.Dynamic;
 
         // Allow movement again
-        GetComponent<CatMovement>().enabled = true;
+        GetComponent<PlayerMovement>().enabled = true;
     }
 }
