@@ -8,7 +8,7 @@ public class Hazard : MonoBehaviour
         PlayerDeath player = collision.GetComponent<PlayerDeath>();
         if (player != null)
         {
-            player.Die();
+            player.Die(true);
             return;
         }
 

@@ -18,12 +18,23 @@ public class EnemyDeath : MonoBehaviour
         GameManager.instance.RegisterEnemy(this);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.CompareTag("Hazard") || collision.CompareTag("DeathZone"))
+        if (collision.gameObject.CompareTag("Hazard") || collision.gameObject.CompareTag("DeathZone"))
         {
             Die();
         }
+
+
+        // Falling boxes can crush enemy
+        if (collision.gameObject.CompareTag("Box"))
+        {
+            if (collision.relativeVelocity.magnitude > 7f)
+            {
+                Die();
+            }
+        }
+
     }
 
     public void Die()

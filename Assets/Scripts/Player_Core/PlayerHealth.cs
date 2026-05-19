@@ -15,6 +15,11 @@ public class PlayerHealth : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth;
+    }
+
     public void TakeDamage(int _damage)
     {
         if (isDead) return;
@@ -28,10 +33,12 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            GetComponent<PlayerDeath>().Die();
+            GetComponent<PlayerDeath>().Die(false);
             anim.SetTrigger("die");
         }
     }
+
+    
 
     /*private void Die()
     {

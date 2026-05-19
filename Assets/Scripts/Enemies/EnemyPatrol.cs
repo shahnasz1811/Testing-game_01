@@ -26,12 +26,17 @@ public class EnemyPatrol : MonoBehaviour
         initScale = enemy.localScale;
     }
 
+    private void OnDisable()
+    {
+        anim.SetBool("isMoving", false);
+    }
+
     private void Update()
     {
         if (movingLeft)
         {
             if (enemy.position.x >= leftEdge.position.x)
-                MoveInDirection(1); // move right by default
+                MoveInDirection(-1); // move right by default
             else 
             {
                 ChangeDirection();
@@ -41,7 +46,7 @@ public class EnemyPatrol : MonoBehaviour
         else
         {
             if (enemy.position.x <= rightEdge.position.x)
-                MoveInDirection(-1); // move left by default
+                MoveInDirection(1); // move left by default
             else
             {
                 ChangeDirection();
@@ -52,9 +57,7 @@ public class EnemyPatrol : MonoBehaviour
 
     private void ChangeDirection()
     {
-
-        idleTimer = 0;
-        anim.SetBool("move", false);
+        anim.SetBool("isMoving", false);
 
         idleTimer += Time.deltaTime;
         
@@ -64,7 +67,8 @@ public class EnemyPatrol : MonoBehaviour
 
     private void MoveInDirection(int _direction)
     {
-        anim.SetBool("move", true);
+        idleTimer = 0;
+        anim.SetBool("isMoving", true);
 
         //Make sure the enemy is facing the correct direction
         enemy.localScale = new Vector3(Mathf.Abs(initScale.x) * _direction, 
