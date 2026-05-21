@@ -41,7 +41,7 @@ public class PlayerDeath : MonoBehaviour
     }
 
     [System.Obsolete]
-    public void Die(bool resetEnemies)
+    public void Die(bool fromHazard)
     {
         // Play death animation
         anim.SetTrigger("die");
@@ -52,13 +52,14 @@ public class PlayerDeath : MonoBehaviour
 
         // Tell movement script to stop
         GetComponent<PlayerMovement>().enabled = false;
+        GetComponent<Collider2D>().enabled = false;
 
         // Respawn after short delay
         Invoke(nameof(Respawn), 1f);
 
-        if (resetEnemies)
+        if (fromHazard)
         {
-            FindObjectOfType<GameManager>().ResetEnemies();
+            GameManager.instance.ResetAll();
         }
     }
 
@@ -91,6 +92,7 @@ public class PlayerDeath : MonoBehaviour
 
         // Allow movement again
         GetComponent<PlayerMovement>().enabled = true;
+        GetComponent<Collider2D>().enabled = true;
 
         playerHealth.ResetHealth();
     }

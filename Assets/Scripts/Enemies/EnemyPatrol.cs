@@ -21,9 +21,21 @@ public class EnemyPatrol : MonoBehaviour
     [Header("Enemy Animator")]
     [SerializeField] private Animator anim;
 
+    // 🔥 VISION CONE SETTINGS
+    [Header("Vision Cone")]
+    public float viewDistance = 6f;
+    [Range(0, 180)] public float viewAngle = 60f;
+
+    private Transform playerTransform;
+    public bool isChasingPlayer;
+
     private void Awake()
     {
         initScale = enemy.localScale;
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+            playerTransform = player.transform;
     }
 
     private void OnDisable()
@@ -33,26 +45,74 @@ public class EnemyPatrol : MonoBehaviour
 
     private void Update()
     {
+        // 👁️ CHECK VISION
+        if (CanSeePlayer())
+        {
+            isChasingPlayer = true;
+        }
+        else
+        {
+            isChasingPlayer = false;
+        }
+
+        // 🔥 CHASE LOGIC
+        if (isChasingPlayer)
+        {
+            anim.SetBool("isMoving", true);
+
+            if (enemy.position.x > playerTransform.position.x)
+            {
+                enemy.localScale = new Vector3(-Mathf.Abs(initScale.x), initScale.y, initScale.z);
+                enemy.position += Vector3.left * speed * Time.deltaTime;
+            }
+            else
+            {
+                enemy.localScale = new Vector3(Mathf.Abs(initScale.x), initScale.y, initScale.z);
+                enemy.position += Vector3.right * speed * Time.deltaTime;
+            }
+
+            return; // IMPORTANT: stop patrol when chasing
+        }
+
+        // 🧠 PATROL LOGIC (unchanged)
         if (movingLeft)
         {
             if (enemy.position.x >= leftEdge.position.x)
-                MoveInDirection(-1); // move right by default
-            else 
-            {
+                MoveInDirection(-1);
+            else
                 ChangeDirection();
-            }
         }
-
         else
         {
             if (enemy.position.x <= rightEdge.position.x)
-                MoveInDirection(1); // move left by default
+                MoveInDirection(1);
             else
-            {
                 ChangeDirection();
-            }
+        }
+    }
+
+    // 👁️ VISION CONE FUNCTION
+    private bool CanSeePlayer()
+    {
+        if (playerTransform == null) return false;
+
+        Vector2 directionToPlayer = (playerTransform.position - enemy.position).normalized;
+
+        float distance = Vector2.Distance(enemy.position, playerTransform.position);
+        if (distance > viewDistance)
+            return false;
+
+        // 👇 IMPORTANT: use facing direction
+        Vector2 facingDirection = enemy.localScale.x > 0 ? Vector2.right : Vector2.left;
+
+        float angle = Vector2.Angle(facingDirection, directionToPlayer);
+
+        if (angle < viewAngle / 2f)
+        {
+            return true;
         }
 
+        return false;
     }
 
     private void ChangeDirection()
@@ -60,7 +120,7 @@ public class EnemyPatrol : MonoBehaviour
         anim.SetBool("isMoving", false);
 
         idleTimer += Time.deltaTime;
-        
+
         if (idleTimer > idleDuration)
             movingLeft = !movingLeft;
     }
@@ -70,12 +130,26 @@ public class EnemyPatrol : MonoBehaviour
         idleTimer = 0;
         anim.SetBool("isMoving", true);
 
-        //Make sure the enemy is facing the correct direction
         enemy.localScale = new Vector3(Mathf.Abs(initScale.x) * _direction, 
         initScale.y, initScale.z);
 
-        //Move in the correct direction
-        enemy.position = new Vector3(enemy.position.x + Time.deltaTime * _direction * speed, 
-        enemy.position.y, enemy.position.z);
+        enemy.position = new Vector3(
+            enemy.position.x + Time.deltaTime * _direction * speed,
+            enemy.position.y,
+            enemy.position.z);
+    }
+
+    // 👁️ DEBUG VISION (VERY USEFUL)
+    private void OnDrawGizmosSelected()
+    {
+        if (enemy == null) return;
+
+        Gizmos.color = Color.yellow;
+
+        Vector3 left = Quaternion.Euler(0, 0, viewAngle / 2) * Vector3.right;
+        Vector3 right = Quaternion.Euler(0, 0, -viewAngle / 2) * Vector3.right;
+
+        Gizmos.DrawRay(enemy.position, left * viewDistance);
+        Gizmos.DrawRay(enemy.position, right * viewDistance);
     }
 }

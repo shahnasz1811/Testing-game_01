@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyDeath : MonoBehaviour
+public class EnemyDeath : MonoBehaviour, IResettable
 {
     private Animator anim;
     private Rigidbody2D body;
@@ -15,10 +15,10 @@ public class EnemyDeath : MonoBehaviour
         anim = GetComponent<Animator>();
         body = GetComponent<Rigidbody2D>();
 
-        GameManager.instance.RegisterEnemy(this);
+        GameManager.instance.RegisterResettable(this);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Hazard") || collision.gameObject.CompareTag("DeathZone"))
         {
@@ -27,13 +27,13 @@ public class EnemyDeath : MonoBehaviour
 
 
         // Falling boxes can crush enemy
-        if (collision.gameObject.CompareTag("Box"))
+        /*if (collision.gameObject.CompareTag("Box"))
         {
             if (collision.relativeVelocity.magnitude > 7f)
             {
                 Die();
             }
-        }
+        }*/
 
     }
 
@@ -48,7 +48,7 @@ public class EnemyDeath : MonoBehaviour
         Invoke(nameof(HideEnemy), 1f); // match animation length
 
         body.linearVelocity = Vector2.zero;
-        body.bodyType = RigidbodyType2D.Kinematic;
+        body.bodyType = RigidbodyType2D.Dynamic;
  
     }
 
@@ -70,18 +70,28 @@ public class EnemyDeath : MonoBehaviour
         gameObject.SetActive(false); // hide enemy immediately
     }
 
-    public void ResetEnemy()
+    public void ResetState()
     {
-        CancelInvoke(); // stops any pending respawn
-
-        transform.position = respawnPoint.position;
-
-        body.bodyType = RigidbodyType2D.Dynamic;
-
-        gameObject.SetActive(true); // show enemy again
-
-        isDead = false;
-
-        anim.ResetTrigger("die");
+        if (isDead)
+        {
+            CancelInvoke(); // stops any pending respawn
+            isDead = false;
+            transform.position = respawnPoint.position;
+            body.bodyType = RigidbodyType2D.Dynamic;
+            gameObject.SetActive(true); // show enemy again
+             Debug.Log("Enemy reset");
+        }
     }
+
+    /*public void ResetEnemy()
+    {
+        if (!isDead)
+        {
+            CancelInvoke(); // stops any pending respawn
+            isDead = false;
+            transform.position = respawnPoint.position;
+            body.bodyType = RigidbodyType2D.Dynamic;
+            gameObject.SetActive(true); // show enemy again
+        }
+    }*/
 }

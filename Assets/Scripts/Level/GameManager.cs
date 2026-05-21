@@ -5,23 +5,23 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    private List<EnemyDeath> enemies = new List<EnemyDeath>();
+    private List<IResettable> resettables = new List<IResettable>();
 
     private void Awake()
     {
         instance = this;
     }
 
-    public void RegisterEnemy(EnemyDeath enemy)
+    public void RegisterResettable(IResettable obj)
     {
-        enemies.Add(enemy);
+        resettables.Add(obj);
     }
 
-    public void ResetEnemies()
+    public void ResetAll()
     {
-        foreach (EnemyDeath enemy in enemies)
+        foreach (IResettable obj in resettables)
         {
-            enemy.ResetEnemy();
+            obj.ResetState();
         }
     }
 }
