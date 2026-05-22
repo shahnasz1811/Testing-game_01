@@ -1,4 +1,5 @@
 using UnityEngine;
+//using UnityEngine.SceneManagement;
 
 public class PlayerDeath : MonoBehaviour
 {
@@ -57,11 +58,14 @@ public class PlayerDeath : MonoBehaviour
         // Respawn after short delay
         Invoke(nameof(Respawn), 1f);
 
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
         if (fromHazard)
         {
             GameManager.instance.ResetAll();
-        }
-    }
+        }    
+        
+     }
 
     /*[System.Obsolete]
     public void Die()

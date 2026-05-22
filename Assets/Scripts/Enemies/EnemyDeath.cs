@@ -15,7 +15,19 @@ public class EnemyDeath : MonoBehaviour, IResettable
         anim = GetComponent<Animator>();
         body = GetComponent<Rigidbody2D>();
 
-        GameManager.instance.RegisterResettable(this);
+        
+    }
+
+    private void Start()
+    {
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.RegisterResettable(this);
+        }
+        else
+        {
+            Debug.LogError("GameManager instance is NULL!");
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -24,17 +36,18 @@ public class EnemyDeath : MonoBehaviour, IResettable
         {
             Die();
         }
+    }
 
-
-        // Falling boxes can crush enemy
-        /*if (collision.gameObject.CompareTag("Box"))
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //Falling boxes can crush enemy
+        if (collision.gameObject.CompareTag("Box"))
         {
             if (collision.relativeVelocity.magnitude > 7f)
             {
                 Die();
             }
-        }*/
-
+        }
     }
 
     public void Die()
@@ -49,6 +62,8 @@ public class EnemyDeath : MonoBehaviour, IResettable
 
         body.linearVelocity = Vector2.zero;
         body.bodyType = RigidbodyType2D.Dynamic;
+
+        Debug.Log(string.Join(", ", GameManager.instance.resettables));
  
     }
 

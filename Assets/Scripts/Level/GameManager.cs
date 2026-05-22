@@ -5,16 +5,20 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    private List<IResettable> resettables = new List<IResettable>();
+    public List<IResettable> resettables = new List<IResettable>();
 
-    private void Awake()
+    public void Awake()
     {
         instance = this;
     }
 
     public void RegisterResettable(IResettable obj)
     {
-        resettables.Add(obj);
+        if (!resettables.Contains(obj))
+        {
+            resettables.Add(obj);
+            Debug.Log("Registered: " + obj);
+        }    
     }
 
     public void ResetAll()

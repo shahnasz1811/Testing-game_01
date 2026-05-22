@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1789626701074354473, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701074354486, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_FlipX
@@ -42,7 +42,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701487851553, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701487851566, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_Color.b
@@ -118,7 +118,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701735993215, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701735993215, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_TagString
@@ -126,7 +126,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701876574790, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701876574791, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_Color.b
