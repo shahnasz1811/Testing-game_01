@@ -94,7 +94,7 @@ public class EnemyDeath : MonoBehaviour, IResettable
             transform.position = respawnPoint.position;
             body.bodyType = RigidbodyType2D.Dynamic;
             gameObject.SetActive(true); // show enemy again
-             Debug.Log("Enemy reset");
+            Debug.Log("Enemy reset");
         }
     }
 

@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerDeath))]
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Health Settings")]
@@ -33,7 +34,9 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            GetComponent<PlayerDeath>().Die(false);
+#pragma warning disable CS0612 // 'PlayerDeath.Die()' is obsolete
+            GetComponent<PlayerDeath>().Die();
+#pragma warning restore CS0612
             anim.SetTrigger("die");
         }
     }

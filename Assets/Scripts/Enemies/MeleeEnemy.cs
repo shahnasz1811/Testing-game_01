@@ -5,6 +5,7 @@ public class MeleeEnemy : MonoBehaviour
     [Header("Attack Parameters")]
     [SerializeField] private float attackCooldown;
     [SerializeField] private float range;
+    [SerializeField] private int damage;
 
     [Header("Collider Parameters")]
     [SerializeField] private float colliderDistance;
@@ -16,13 +17,9 @@ public class MeleeEnemy : MonoBehaviour
     [SerializeField] private LayerMask playerLayer;
     private float cooldownTimer = Mathf.Infinity;
 
-    [Header("Enemy Damage")]
-    [SerializeField] private int damage = 1;
-
     //References
     private Animator anim;
     private PlayerHealth playerHealth;
-
     private EnemyPatrol enemyPatrol;
 
     private void Awake()
@@ -67,10 +64,8 @@ public class MeleeEnemy : MonoBehaviour
             playerLayer);
 
         if (hit.collider != null)
-        {
             playerHealth = hit.transform.GetComponent<PlayerHealth>();
-        }
-       
+        
         return hit.collider != null;
     }
 
@@ -89,11 +84,11 @@ public class MeleeEnemy : MonoBehaviour
              boxCollider.bounds.size.z));
     }
 
-    private void DamagePlayer()
+    public void DamagePlayer()
     {
-        Debug.Log("DamagePlayer CALLED");
+        Debug.Log("Enemy HIT player");
 
-        if (playerHealth != null)
+        if (PlayerInSight())
         {
             playerHealth.TakeDamage(damage);
         }

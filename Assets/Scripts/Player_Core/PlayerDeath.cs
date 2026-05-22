@@ -1,11 +1,13 @@
 using UnityEngine;
-//using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class PlayerDeath : MonoBehaviour
 {
     private Animator anim;
     private Rigidbody2D body;
     private PlayerHealth playerHealth;
+    private EnemyDeath enemyRespawn;
 
     [Header("Respawn Settings")]
     public Transform respawnPoint; // drag a respawn location in Inspector
@@ -15,6 +17,7 @@ public class PlayerDeath : MonoBehaviour
         anim = GetComponent<Animator>();
         body = GetComponent<Rigidbody2D>();
         playerHealth = GetComponent<PlayerHealth>();
+        enemyRespawn = GetComponent<EnemyDeath>();
     }
 
     /*private void OnTriggerEnter2D(Collider2D collision)
@@ -29,20 +32,13 @@ public class PlayerDeath : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Died from hazard
-        if (collision.CompareTag("Hazard") || collision.CompareTag("DeathZone"))
+        if (collision.CompareTag("Hazard") || collision.CompareTag("DeathZone") || collision.CompareTag("Enemy"))
         {
-            Die(true);
-        }
-
-        // Died from enemy
-        if (collision.CompareTag("Enemy"))
-        {
-            Die(false);
+            Die();
         }
     }
 
-    [System.Obsolete]
-    public void Die(bool fromHazard)
+    public void Die()
     {
         // Play death animation
         anim.SetTrigger("die");
@@ -56,16 +52,25 @@ public class PlayerDeath : MonoBehaviour
         GetComponent<Collider2D>().enabled = false;
 
         // Respawn after short delay
-        Invoke(nameof(Respawn), 1f);
+        //Invoke(nameof(Respawn), 1f);
+
+        // Delay scene reload instead of calling it instantly
+        StartCoroutine(DeathRoutine());
 
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
-        if (fromHazard)
+        /*if (fromHazard)
         {
-            GameManager.instance.ResetAll();
-        }    
+            
+        }*/
         
      }
+
+     IEnumerator DeathRoutine()
+    {
+        yield return new WaitForSeconds(1f); // Wait for death animation to play
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
 
     /*[System.Obsolete]
     public void Die()

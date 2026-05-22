@@ -30,6 +30,12 @@ public class PlayerMovement : MonoBehaviour
 
     //private float holdTime;
 
+    [Header("Knockback")]
+    public float KBForce = 10f;
+    public float KBCounter;
+    public float KBTotalTime = 0.2f;
+    public bool KnockFromRight;
+
     [Header("Ground Check")]
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
@@ -45,6 +51,7 @@ public class PlayerMovement : MonoBehaviour
         originalScale = transform.localScale;
 
         anim = GetComponent<Animator>();
+        KBCounter = 0f; // ✅ IMPORTANT
     }
 
     private void Update()
@@ -52,7 +59,22 @@ public class PlayerMovement : MonoBehaviour
         // LEFT & RIGHT MOVEMENT
         float moveInput = Input.GetAxisRaw("Horizontal");
 
-        body.linearVelocity = new Vector2(moveInput * moveSpeed,body.linearVelocity.y);
+        if (KBCounter <= 0)
+        {
+            body.linearVelocity = new Vector2(moveInput * moveSpeed, body.linearVelocity.y);
+        }
+        else
+        {
+            if (KnockFromRight)
+            {
+                body.linearVelocity = new Vector2(-KBForce, KBForce);
+            }
+            if (!KnockFromRight)
+            {
+                body.linearVelocity = new Vector2(KBForce, KBForce);
+            }
+            KBCounter -= Time.deltaTime;
+        }
 
         /* STOP MOVEMENT WHILE CHARGING
         if (isCharging)
@@ -154,6 +176,20 @@ public class PlayerMovement : MonoBehaviour
         //Set animators parameters
         anim.SetBool("Run", moveInput != 0);
 
+    }
+
+    public void TakeKnockback(Vector2 enemyPosition)
+    {
+        KBCounter = KBTotalTime;
+
+        if (transform.position.x <= enemyPosition.x)
+        {
+            KnockFromRight = true;
+        }
+        else
+        {
+            KnockFromRight = false;
+        }
     }
 
     // GROUND CHECK VISUAL
