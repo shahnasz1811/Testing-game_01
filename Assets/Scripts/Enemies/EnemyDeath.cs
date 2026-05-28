@@ -10,12 +10,17 @@ public class EnemyDeath : MonoBehaviour, IResettable
 
     private bool isDead;
 
+    [Header("Flashing Settings")]
+    [SerializeField] private SpriteColorFlasher spriteColorFlasher;
+    private SpriteRenderer spriteRend; 
+
+
     private void Awake()
     {
         anim = GetComponent<Animator>();
         body = GetComponent<Rigidbody2D>();
-
-        
+        spriteColorFlasher = GetComponent<SpriteColorFlasher>();
+        spriteRend = GetComponentInChildren<SpriteRenderer>();
     }
 
     private void Start()
@@ -57,6 +62,10 @@ public class EnemyDeath : MonoBehaviour, IResettable
 
         Debug.Log("Enemy died");
 
+        GameManager.instance.EnemyDied();
+
+        spriteColorFlasher.FlashColor(spriteRend, 0.5f, Color.white);
+
         anim.SetTrigger("die");
         Invoke(nameof(HideEnemy), 1f); // match animation length
 
@@ -64,7 +73,6 @@ public class EnemyDeath : MonoBehaviour, IResettable
         body.bodyType = RigidbodyType2D.Dynamic;
 
         Debug.Log(string.Join(", ", GameManager.instance.resettables));
- 
     }
 
     /*private void Respawn()

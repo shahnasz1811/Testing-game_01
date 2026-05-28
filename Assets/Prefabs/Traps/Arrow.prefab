@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4634212953564837890}
   m_Layer: 8
   m_Name: Arrow
-  m_TagString: Enemy
+  m_TagString: Hazard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -180,7 +180,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baf88a85b84cdb54c8cefc6c74eb3d09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hazard
-  playerTag: Player
 --- !u!114 &4634212953564837890
 MonoBehaviour:
   m_ObjectHideFlags: 0

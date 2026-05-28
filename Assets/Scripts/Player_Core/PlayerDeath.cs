@@ -5,34 +5,29 @@ using System.Collections;
 public class PlayerDeath : MonoBehaviour
 {
     private Animator anim;
-    private Rigidbody2D body;
-    private PlayerHealth playerHealth;
-    private EnemyDeath enemyRespawn;
+    private Rigidbody2D rb;
+    private PlayerMovement_02 movement;
 
     [Header("Respawn Settings")]
-    public Transform respawnPoint; // drag a respawn location in Inspector
+    public Transform respawnPoint;
+    public float deathDelay = 1f;
+
+    private bool isDead = false;
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
-        body = GetComponent<Rigidbody2D>();
-        playerHealth = GetComponent<PlayerHealth>();
-        enemyRespawn = GetComponent<EnemyDeath>();
+        rb = GetComponent<Rigidbody2D>();
+        movement = GetComponent<PlayerMovement_02>();
     }
-
-    /*private void OnTriggerEnter2D(Collider2D collision)
-    {
-        // If player touches hazard or death zone
-        if (collision.CompareTag("Hazard") || collision.CompareTag("DeathZone") || collision.CompareTag("Enemy"))
-        {
-            Die();
-        }
-    }*/
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Died from hazard
-        if (collision.CompareTag("Hazard") || collision.CompareTag("DeathZone") || collision.CompareTag("Enemy"))
+        if (isDead) return;
+
+        if (collision.CompareTag("Hazard") ||
+            collision.CompareTag("DeathZone") ||
+            collision.CompareTag("Enemy"))
         {
             Die();
         }
@@ -40,69 +35,53 @@ public class PlayerDeath : MonoBehaviour
 
     public void Die()
     {
-        // Play death animation
-        anim.SetTrigger("die");
+        if (isDead) return;
+        isDead = true;
 
-        // Disable movement temporarily
-        body.linearVelocity = Vector2.zero;
-        body.bodyType = RigidbodyType2D.Kinematic;
+        Debug.Log("Player Died");
 
-        // Tell movement script to stop
-        GetComponent<PlayerMovement>().enabled = false;
+        // Play animation
+        if (anim != null)
+            anim.SetTrigger("die");
+
+        // Stop movement
+        movement.enabled = false;
+
+        // Stop physics completely
+        rb.linearVelocity = Vector2.zero;
+        rb.simulated = false;
+
+        // Disable collider so no extra triggers
         GetComponent<Collider2D>().enabled = false;
 
-        // Respawn after short delay
-        //Invoke(nameof(Respawn), 1f);
-
-        // Delay scene reload instead of calling it instantly
+        // Start respawn
         StartCoroutine(DeathRoutine());
-
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-
-        /*if (fromHazard)
-        {
-            
-        }*/
-        
-     }
-
-     IEnumerator DeathRoutine()
-    {
-        yield return new WaitForSeconds(1f); // Wait for death animation to play
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    /*[System.Obsolete]
-    public void Die()
+    private IEnumerator DeathRoutine()
     {
-        // Play death animation
-        anim.SetTrigger("die");
+        yield return new WaitForSeconds(deathDelay);
 
-        // Disable movement temporarily
-        body.linearVelocity = Vector2.zero;
-        body.bodyType = RigidbodyType2D.Kinematic;
+        // OPTION 1: Reload scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
-        // Tell movement script to stop
-        GetComponent<PlayerMovement>().enabled = false;
-
-        // Respawn after short delay
-        Invoke(nameof(Respawn), 1f);
-
-        GameManager.instance.ResetEnemies();
-    }*/
+        // OPTION 2: Respawn instead (comment above and uncomment below)
+        //Respawn();
+    }
 
     private void Respawn()
     {
-        // Move player back to respawn point
         transform.position = respawnPoint.position;
 
         // Re-enable physics
-        body.bodyType = RigidbodyType2D.Dynamic;
+        rb.simulated = true;
 
-        // Allow movement again
-        GetComponent<PlayerMovement>().enabled = true;
+        // Enable movement
+        movement.enabled = true;
+
+        // Enable collider
         GetComponent<Collider2D>().enabled = true;
 
-        playerHealth.ResetHealth();
+        isDead = false;
     }
 }

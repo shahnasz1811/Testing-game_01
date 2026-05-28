@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -7,18 +8,27 @@ public class GameManager : MonoBehaviour
 
     public List<IResettable> resettables = new List<IResettable>();
 
-    public void Awake()
+    private int totalEnemies;
+    private int deadEnemies;
+
+    private void Awake()
     {
         instance = this;
+    }
+
+    private void Start()
+    {
+        // Count all enemies at start
+        EnemyDeath[] enemies = FindObjectsOfType<EnemyDeath>();
+        totalEnemies = enemies.Length;
+
+        Debug.Log("Total Enemies: " + totalEnemies);
     }
 
     public void RegisterResettable(IResettable obj)
     {
         if (!resettables.Contains(obj))
-        {
             resettables.Add(obj);
-            Debug.Log("Registered: " + obj);
-        }    
     }
 
     public void ResetAll()
@@ -27,5 +37,33 @@ public class GameManager : MonoBehaviour
         {
             obj.ResetState();
         }
+
+        deadEnemies = 0; // reset counter when player dies
+    }
+
+    // 🔥 NEW FUNCTION
+    public void EnemyDied()
+    {
+        deadEnemies++;
+
+        Debug.Log("Enemies killed: " + deadEnemies);
+
+        if (deadEnemies >= totalEnemies)
+        {
+            LevelComplete();
+        }
+    }
+
+    private void LevelComplete()
+    {
+        Debug.Log("LEVEL COMPLETE!");
+
+        Invoke(nameof(LoadNextLevel), 1.5f); // small delay
+    }
+
+    private void LoadNextLevel()
+    {
+        int current = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(current + 1);
     }
 }
