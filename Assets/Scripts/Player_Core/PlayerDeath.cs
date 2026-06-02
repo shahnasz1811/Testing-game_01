@@ -38,11 +38,13 @@ public class PlayerDeath : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
+        movement.IsDead = true;
+
         Debug.Log("Player Died");
 
         // Play animation
         if (anim != null)
-            anim.SetTrigger("die");
+        anim.SetTrigger("die");
 
         // Stop movement
         movement.enabled = false;

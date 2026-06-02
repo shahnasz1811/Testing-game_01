@@ -9,10 +9,12 @@ public class PlayerMovement_02 : MonoBehaviour
 	//HOW TO: to add the scriptable object, right-click in the project window -> create -> Player Data
 	//Next, drag it into the slot in playerMovement on your player
 
+	private Animator anim;
 	public PlayerData Data;
+    public bool IsDead { get; set; }
 
-	#region Variables
-	//Components
+    #region Variables
+    //Components
     public Rigidbody2D RB { get; private set; }
 
 	//Variables control the various actions the player can perform at any time.
@@ -57,7 +59,8 @@ public class PlayerMovement_02 : MonoBehaviour
     private void Awake()
 	{
 		RB = GetComponent<Rigidbody2D>();
-	}
+        anim = GetComponent<Animator>();
+    }
 
 	private void Start()
 	{
@@ -159,12 +162,15 @@ public class PlayerMovement_02 : MonoBehaviour
 			_wallJumpStartTime = Time.time;
 			_lastWallJumpDir = (LastOnWallRightTime > 0) ? -1 : 1;
 			
-			WallJump(_lastWallJumpDir);
-		}
-		#endregion
 
-		#region SLIDE CHECKS
-		if (CanSlide() && ((LastOnWallLeftTime > 0 && _moveInput.x < 0) || (LastOnWallRightTime > 0 && _moveInput.x > 0)))
+            WallJump(_lastWallJumpDir);
+		}
+
+		
+        #endregion
+
+        #region SLIDE CHECKS
+        if (CanSlide() && ((LastOnWallLeftTime > 0 && _moveInput.x < 0) || (LastOnWallRightTime > 0 && _moveInput.x > 0)))
 			IsSliding = true;
 		else
 			IsSliding = false;
@@ -206,6 +212,8 @@ public class PlayerMovement_02 : MonoBehaviour
 			SetGravityScale(Data.gravityScale);
 		}
 		#endregion
+
+		UpdateAnimations();
     }
 
     private void FixedUpdate()
@@ -324,8 +332,9 @@ public class PlayerMovement_02 : MonoBehaviour
 			force -= RB.linearVelocity.y;
 
 		RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
-		#endregion
-	}
+		anim.SetTrigger("Jump");
+        #endregion    
+    }
 
 	private void WallJump(int dir)
 	{
@@ -348,12 +357,24 @@ public class PlayerMovement_02 : MonoBehaviour
 		//Unlike in the run we want to use the Impulse mode.
 		//The default mode will apply are force instantly ignoring masss
 		RB.AddForce(force, ForceMode2D.Impulse);
-		#endregion
-	}
-	#endregion
 
-	#region OTHER MOVEMENT METHODS
-	private void Slide()
+        anim.SetBool("isWallJumping", true);
+
+        StartCoroutine(StopWallJumpAnimation());
+
+        #endregion
+    }
+    #endregion
+
+    IEnumerator StopWallJumpAnimation()
+    {
+        yield return new WaitForSeconds(Data.wallJumpTime);
+        anim.SetBool("isWallJumping", false);
+    }
+
+
+    #region OTHER MOVEMENT METHODS
+    private void Slide()
 	{
 		//Works the same as the Run but only in the y-axis
 		//THis seems to work fine, buit maybe you'll find a better way to implement a slide into this system
@@ -403,8 +424,39 @@ public class PlayerMovement_02 : MonoBehaviour
 		else
 			return false;
 	}
-    #endregion
+	#endregion
 
+	private void UpdateAnimations()
+	{
+        if (IsDead) return;
+		if (IsWallJumping) return;
+
+        // Speed
+        anim.SetFloat("Run", Mathf.Abs(RB.linearVelocity.x));
+        //Debug.Log(RB.linearVelocity.x);
+        //anim.SetFloat("Run", movement);
+
+        // Ground
+        bool isGrounded = LastOnGroundTime > 0;
+		anim.SetBool("isGrounded", isGrounded);
+
+		// Jump / Fall
+		anim.SetFloat("yVelocity", RB.linearVelocity.y);
+
+		// Wall
+		anim.SetBool("isSliding", IsSliding);
+
+		// Optional
+		anim.SetBool("isWallJumping", IsWallJumping);
+	}
+
+	private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            anim.SetBool("isGrounded", true);
+        }
+    }
 
     #region EDITOR METHODS
     private void OnDrawGizmosSelected()
@@ -416,6 +468,6 @@ public class PlayerMovement_02 : MonoBehaviour
 		Gizmos.DrawWireCube(_backWallCheckPoint.position, _wallCheckSize);
 	}
     #endregion
-}
 
-// created by Dawnosaur :D
+
+}
