@@ -358,20 +358,16 @@ public class PlayerMovement_02 : MonoBehaviour
 		//The default mode will apply are force instantly ignoring masss
 		RB.AddForce(force, ForceMode2D.Impulse);
 
-        anim.SetBool("isWallJumping", true);
+        // STOP sliding immediately
+        IsSliding = false;
+        anim.SetBool("isSliding", false);
 
-        StartCoroutine(StopWallJumpAnimation());
+        // play jump animation
+        anim.SetTrigger("Jump"); // or SetBool("isJumping", true)
 
         #endregion
     }
     #endregion
-
-    IEnumerator StopWallJumpAnimation()
-    {
-        yield return new WaitForSeconds(Data.wallJumpTime);
-        anim.SetBool("isWallJumping", false);
-    }
-
 
     #region OTHER MOVEMENT METHODS
     private void Slide()
@@ -385,7 +381,9 @@ public class PlayerMovement_02 : MonoBehaviour
 		movement = Mathf.Clamp(movement, -Mathf.Abs(speedDif)  * (1 / Time.fixedDeltaTime), Mathf.Abs(speedDif) * (1 / Time.fixedDeltaTime));
 
 		RB.AddForce(movement * Vector2.up);
-	}
+
+        anim.SetBool("isSliding", true);
+    }
     #endregion
 
 
@@ -419,8 +417,8 @@ public class PlayerMovement_02 : MonoBehaviour
 
 	public bool CanSlide()
     {
-		if (LastOnWallTime > 0 && !IsJumping && !IsWallJumping && LastOnGroundTime <= 0)
-			return true;
+		if (LastOnWallTime > 0 && !IsJumping && !IsWallJumping && LastOnGroundTime <= 0 && RB.linearVelocity.y < 0)
+            return true;
 		else
 			return false;
 	}
@@ -447,7 +445,7 @@ public class PlayerMovement_02 : MonoBehaviour
 		anim.SetBool("isSliding", IsSliding);
 
 		// Optional
-		anim.SetBool("isWallJumping", IsWallJumping);
+		//anim.SetTrigger("isWallJumping");
 	}
 
 	private void OnCollisionEnter2D(Collision2D collision)
