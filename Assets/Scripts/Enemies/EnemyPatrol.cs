@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyPatrol : MonoBehaviour
 {
-    [Header ("Patrol Points")] 
+    [Header("Patrol Points")]
     [SerializeField] private Transform leftEdge;
     [SerializeField] private Transform rightEdge;
 
@@ -10,7 +10,11 @@ public class EnemyPatrol : MonoBehaviour
     [SerializeField] private Transform enemy;
 
     [Header("Movement parameters")]
-    [SerializeField] private float speed;
+    [SerializeField] private float patrolSpeed = 2f;
+    [SerializeField] private float chaseSpeed = 5f;
+    [SerializeField] private float acceleration = 3f;
+
+    private float currentSpeed;
     private Vector3 initScale;
     private bool movingLeft;
 
@@ -21,7 +25,7 @@ public class EnemyPatrol : MonoBehaviour
     [Header("Enemy Animator")]
     [SerializeField] private Animator anim;
 
-    // 🔥 VISION CONE SETTINGS
+    // 👁️ VISION
     [Header("Vision Cone")]
     public float viewDistance = 6f;
     [Range(0, 180)] public float viewAngle = 60f;
@@ -29,9 +33,21 @@ public class EnemyPatrol : MonoBehaviour
     private Transform playerTransform;
     public bool isChasingPlayer;
 
+    // ⚠️ ALERT SYSTEM
+    [Header("Alert System")]
+    [SerializeField] private float alertDuration = 1f;
+    private float alertTimer;
+    private bool isAlerting;
+
+    // 🧠 LOSE SIGHT COOLDOWN
+    [Header("Lose Player Cooldown")]
+    [SerializeField] private float loseSightCooldown = 1.5f;
+    private float loseSightTimer;
+
     private void Awake()
     {
         initScale = enemy.localScale;
+        currentSpeed = patrolSpeed;
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
@@ -45,36 +61,95 @@ public class EnemyPatrol : MonoBehaviour
 
     private void Update()
     {
-        // 👁️ CHECK VISION
-        if (CanSeePlayer())
+        bool canSeePlayer = CanSeePlayer();
+
+        // ⚠️ START ALERT
+        if (canSeePlayer && !isChasingPlayer && !isAlerting)
         {
-            isChasingPlayer = true;
-        }
-        else
-        {
-            isChasingPlayer = false;
+            isAlerting = true;
+            alertTimer = 0;
+            loseSightTimer = loseSightCooldown;
         }
 
-        // 🔥 CHASE LOGIC
+        // ⚠️ HANDLE ALERT
+        if (isAlerting)
+        {
+            anim.SetBool("isMoving", false);
+
+            if (alertTimer == 0)
+                anim.SetTrigger("alert");
+
+            alertTimer += Time.deltaTime;
+
+            // 👁️ Maintain / reduce cooldown
+            if (canSeePlayer)
+                loseSightTimer = loseSightCooldown;
+            else
+                loseSightTimer -= Time.deltaTime;
+
+            // ✅ Commit to chase
+            if (alertTimer >= alertDuration && canSeePlayer)
+            {
+                isAlerting = false;
+                isChasingPlayer = true;
+            }
+
+            // ❌ Give up
+            if (loseSightTimer <= 0)
+            {
+                isAlerting = false;
+                movingLeft = !movingLeft; // turn around
+            }
+
+            return;
+        }
+
+        // 🏃 HANDLE CHASE
+        if (isChasingPlayer)
+        {
+            if (canSeePlayer)
+            {
+                loseSightTimer = loseSightCooldown;
+            }
+            else
+            {
+                loseSightTimer -= Time.deltaTime;
+
+                if (loseSightTimer <= 0)
+                {
+                    isChasingPlayer = false;
+                    movingLeft = !movingLeft; // turn around
+                }
+            }
+        }
+
+        // 🔥 SMOOTH SPEED
+        float targetSpeed = isChasingPlayer ? chaseSpeed : patrolSpeed;
+        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * acceleration);
+
+        // 🏃 CHASE MOVEMENT
         if (isChasingPlayer)
         {
             anim.SetBool("isMoving", true);
 
+            Vector3 direction;
+
             if (enemy.position.x > playerTransform.position.x)
             {
+                direction = Vector3.left;
                 enemy.localScale = new Vector3(-Mathf.Abs(initScale.x), initScale.y, initScale.z);
-                enemy.position += Vector3.left * speed * Time.deltaTime;
             }
             else
             {
+                direction = Vector3.right;
                 enemy.localScale = new Vector3(Mathf.Abs(initScale.x), initScale.y, initScale.z);
-                enemy.position += Vector3.right * speed * Time.deltaTime;
             }
 
-            return; // IMPORTANT: stop patrol when chasing
+            enemy.position += direction * currentSpeed * Time.deltaTime;
+            return;
         }
 
-        // 🧠 PATROL LOGIC (unchanged)
+        // 🧠 PATROL
         if (movingLeft)
         {
             if (enemy.position.x >= leftEdge.position.x)
@@ -91,7 +166,7 @@ public class EnemyPatrol : MonoBehaviour
         }
     }
 
-    // 👁️ VISION CONE FUNCTION
+    // 👁️ VISION
     private bool CanSeePlayer()
     {
         if (playerTransform == null) return false;
@@ -102,17 +177,10 @@ public class EnemyPatrol : MonoBehaviour
         if (distance > viewDistance)
             return false;
 
-        // 👇 IMPORTANT: use facing direction
         Vector2 facingDirection = enemy.localScale.x > 0 ? Vector2.right : Vector2.left;
-
         float angle = Vector2.Angle(facingDirection, directionToPlayer);
 
-        if (angle < viewAngle / 2f)
-        {
-            return true;
-        }
-
-        return false;
+        return angle < viewAngle / 2f;
     }
 
     private void ChangeDirection()
@@ -130,16 +198,15 @@ public class EnemyPatrol : MonoBehaviour
         idleTimer = 0;
         anim.SetBool("isMoving", true);
 
-        enemy.localScale = new Vector3(Mathf.Abs(initScale.x) * _direction, 
+        enemy.localScale = new Vector3(Mathf.Abs(initScale.x) * _direction,
         initScale.y, initScale.z);
 
-        enemy.position = new Vector3(
-            enemy.position.x + Time.deltaTime * _direction * speed,
-            enemy.position.y,
-            enemy.position.z);
+        Vector3 direction = _direction == -1 ? Vector3.left : Vector3.right;
+
+        enemy.position += direction * currentSpeed * Time.deltaTime;
     }
 
-    // 👁️ DEBUG VISION (VERY USEFUL)
+    // 👁️ DEBUG
     private void OnDrawGizmosSelected()
     {
         if (enemy == null) return;

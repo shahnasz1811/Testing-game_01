@@ -43,7 +43,7 @@ public class EnemyDeath : MonoBehaviour, IResettable
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+   /*private void OnCollisionEnter2D(Collision2D collision)
     {
         //Falling boxes can crush enemy
         if (collision.gameObject.CompareTag("Box"))
@@ -53,7 +53,7 @@ public class EnemyDeath : MonoBehaviour, IResettable
                 Die();
             }
         }
-    }
+    }*/
 
     public void Die()
     {
