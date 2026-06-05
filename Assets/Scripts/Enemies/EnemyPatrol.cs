@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class EnemyPatrol : MonoBehaviour
 {
+    #region PARAMETERS
     [Header("Patrol Points")]
     [SerializeField] private Transform leftEdge;
     [SerializeField] private Transform rightEdge;
@@ -44,6 +45,9 @@ public class EnemyPatrol : MonoBehaviour
     [SerializeField] private float loseSightCooldown = 1.5f;
     private float loseSightTimer;
 
+    private Rigidbody2D RB;
+    #endregion
+
     private void Awake()
     {
         initScale = enemy.localScale;
@@ -52,15 +56,18 @@ public class EnemyPatrol : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
             playerTransform = player.transform;
+
+        RB = GetComponent<Rigidbody2D>();
     }
 
-    private void OnDisable()
+    /*private void OnDisable()
     {
         anim.SetBool("isMoving", false);
-    }
+    }*/
 
     private void Update()
     {
+        #region ENEMY CHASE LOGIC
         bool canSeePlayer = CanSeePlayer();
 
         // ⚠️ START ALERT
@@ -148,7 +155,9 @@ public class EnemyPatrol : MonoBehaviour
             enemy.position += direction * currentSpeed * Time.deltaTime;
             return;
         }
+        #endregion
 
+        #region ENEMY PATROL LOGIC
         // 🧠 PATROL
         if (movingLeft)
         {
@@ -164,8 +173,18 @@ public class EnemyPatrol : MonoBehaviour
             else
                 ChangeDirection();
         }
+        #endregion
+
+        #region GAME OVER CHECK
+        if (GameManager.instance.isGameOver)
+        {
+            RB.linearVelocity = Vector2.zero;
+            return;
+        }
+        #endregion
     }
 
+    #region ENEMY CHASE METHODS
     // 👁️ VISION
     private bool CanSeePlayer()
     {
@@ -205,6 +224,7 @@ public class EnemyPatrol : MonoBehaviour
 
         enemy.position += direction * currentSpeed * Time.deltaTime;
     }
+    #endregion
 
     // 👁️ DEBUG
     private void OnDrawGizmosSelected()

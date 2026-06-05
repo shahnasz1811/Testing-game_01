@@ -439,7 +439,7 @@ public class PlayerMovement_02 : MonoBehaviour
 		anim.SetBool("isGrounded", isGrounded);
 
 		// Jump / Fall
-		anim.SetFloat("yVelocity", RB.linearVelocity.y);
+		//anim.SetFloat("yVelocity", RB.linearVelocity.y);
 
 		// Wall
 		anim.SetBool("isSliding", IsSliding);

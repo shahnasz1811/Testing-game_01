@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public List<IResettable> resettables = new List<IResettable>();
+    public bool isGameOver = false;
 
     private int totalEnemies;
     private int deadEnemies;
@@ -16,6 +17,7 @@ public class GameManager : MonoBehaviour
         instance = this;
     }
 
+    [System.Obsolete]
     private void Start()
     {
         // Count all enemies at start
@@ -29,6 +31,21 @@ public class GameManager : MonoBehaviour
     {
         if (!resettables.Contains(obj))
             resettables.Add(obj);
+    }
+
+    public void GameOver()
+    {
+        if (isGameOver) return; // prevent double trigger
+
+        isGameOver = true;
+
+        Debug.Log("GAME OVER");
+
+        // Stop all enemies / systems
+        //Time.timeScale = 0f; // optional freeze
+
+        // Or instead of freeze, you can reset:
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void ResetAll()

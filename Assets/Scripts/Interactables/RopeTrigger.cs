@@ -4,13 +4,15 @@ public class RopeTrigger : MonoBehaviour
 {
     [SerializeField] private HangingObject hangingObject;
 
+    private Collider2D Collider2D => GetComponent<Collider2D>();
     private bool playerInRange;
 
     private void Update()
     {
         if (playerInRange && Input.GetKeyDown(KeyCode.E))
         {
-            hangingObject.Drop();
+            hangingObject.Interact();
+            Collider2D.enabled = false; // Disable this trigger after interaction
         }
     }
 

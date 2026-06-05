@@ -44,6 +44,8 @@ public class MeleeEnemy : MonoBehaviour
 
         if(enemyPatrol != null)
             enemyPatrol.enabled = !PlayerInSight();
+
+        Debug.Log("Enemy running");
     }
 
     private bool PlayerInSight()

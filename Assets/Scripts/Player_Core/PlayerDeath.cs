@@ -64,8 +64,10 @@ public class PlayerDeath : MonoBehaviour
     {
         yield return new WaitForSeconds(deathDelay);
 
+        GameManager.instance.GameOver();
+
         // OPTION 1: Reload scene
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
         // OPTION 2: Respawn instead (comment above and uncomment below)
         //Respawn();

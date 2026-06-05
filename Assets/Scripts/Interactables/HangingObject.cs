@@ -11,7 +11,7 @@ public class HangingObject : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void Drop()
+    public void Interact()
     {
         if (hinge != null)
             hinge.enabled = false; // 🔥 THIS CUTS THE ROPE
