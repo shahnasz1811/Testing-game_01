@@ -12,7 +12,7 @@ public class PlayerDeath : MonoBehaviour
     public Transform respawnPoint;
     public float deathDelay = 1f;
 
-    private bool isDead = false;
+    public bool isDead = false;
 
     private void Awake()
     {
