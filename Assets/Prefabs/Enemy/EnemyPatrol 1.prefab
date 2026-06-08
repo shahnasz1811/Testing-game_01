@@ -58,7 +58,7 @@ MonoBehaviour:
   viewDistance: 3.63
   viewAngle: 56.4
   isChasingPlayer: 0
-  alertDuration: 1
+  alertDuration: 0.5
   loseSightCooldown: 1.5
 --- !u!1 &6749884435895202342
 GameObject:

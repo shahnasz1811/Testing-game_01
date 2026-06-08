@@ -8,6 +8,7 @@ TagManager:
   - Hazard
   - Enemy
   - Box
+  - Door
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - Hazard
   - Enemy
   - PropItem
-  - 
+  - Door
   - 
   - 
   - 
@@ -47,6 +48,9 @@ TagManager:
     locked: 0
   - name: Foreground
     uniqueID: 530684743
+    locked: 0
+  - name: Background
+    uniqueID: 1995275399
     locked: 0
   m_RenderingLayers:
   - Default

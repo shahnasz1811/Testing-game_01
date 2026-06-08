@@ -8,7 +8,9 @@ public class GameManager : MonoBehaviour
 
     public List<IResettable> resettables = new List<IResettable>();
     public bool isGameOver = false;
-
+    
+    //public int areaIndex;
+    //public Door exitDoor;
     private int totalEnemies;
     private int deadEnemies;
 
@@ -24,7 +26,13 @@ public class GameManager : MonoBehaviour
         EnemyDeath[] enemies = FindObjectsOfType<EnemyDeath>();
         totalEnemies = enemies.Length;
 
-        Debug.Log("Total Enemies: " + totalEnemies);
+        /* Load saved progress
+        if (IsUnlocked())
+        {
+            exitDoor.Unlock();
+        }
+
+        Debug.Log("Total Enemies: " + totalEnemies);*/
     }
 
     public void RegisterResettable(IResettable obj)
@@ -41,7 +49,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("GAME OVER");
 
-        // Stop all enemies / systems
+        //Stop all enemies / systems
         //Time.timeScale = 0f; // optional freeze
 
         // Or instead of freeze, you can reset:
@@ -67,16 +75,35 @@ public class GameManager : MonoBehaviour
 
         if (deadEnemies >= totalEnemies)
         {
-            LevelComplete();
+            LoadNextLevel();
         }
     }
 
-    private void LevelComplete()
+    /*public bool AreAllEnemiesDead()
+    {
+        return deadEnemies >= totalEnemies;
+    }*/
+
+    /*void UnlockArea()
+    {
+        Debug.Log("AREA UNLOCKED!");
+        // Save progress
+        PlayerPrefs.SetInt("Area" + areaIndex, 1);
+        // Unlock exit door
+        exitDoor.Unlock();
+    }
+
+    bool IsUnlocked()
+    {
+        return PlayerPrefs.GetInt("Area" + areaIndex, 0) == 1;
+    }
+
+    /*private void LevelComplete()
     {
         Debug.Log("LEVEL COMPLETE!");
 
         Invoke(nameof(LoadNextLevel), 1.5f); // small delay
-    }
+    }*/
 
     private void LoadNextLevel()
     {
