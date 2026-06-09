@@ -6537,11 +6537,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5562692383138339793, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.6937127
+      value: -11.361547
       objectReference: {fileID: 0}
     - target: {fileID: 5562692383138339793, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.1205761
+      value: 1.1162461
+      objectReference: {fileID: 0}
+    - target: {fileID: 6517751955691789503, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0.46226418
+      objectReference: {fileID: 0}
+    - target: {fileID: 6517751955691789503, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0.46226418
+      objectReference: {fileID: 0}
+    - target: {fileID: 6517751955691789503, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0.46226418
       objectReference: {fileID: 0}
     - target: {fileID: 6862781537928576551, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[0].x
