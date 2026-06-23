@@ -45,7 +45,16 @@ public class EnemyPatrol : MonoBehaviour
     [SerializeField] private float loseSightCooldown = 1.5f;
     private float loseSightTimer;
 
+    [Header("Wall Check")]
+    [SerializeField] private Transform wallCheck;
+    [SerializeField] private float wallCheckDistance = 0.2f;
+    [SerializeField] private LayerMask wallLayer;
+
+
     private Rigidbody2D RB;
+    private EnemyDeath enemyDeath;
+
+    private bool waitingAtWall;
     #endregion
 
     private void Awake()
@@ -58,6 +67,12 @@ public class EnemyPatrol : MonoBehaviour
             playerTransform = player.transform;
 
         RB = GetComponent<Rigidbody2D>();
+        enemyDeath = GetComponent<EnemyDeath>();
+
+        if (enemyDeath == null)
+        {
+            Debug.LogError("EnemyDeath script is missing on " + gameObject.name);
+        }
     }
 
     /*private void OnDisable()
@@ -67,6 +82,12 @@ public class EnemyPatrol : MonoBehaviour
 
     private void Update()
     {
+        if (enemyDeath != null && enemyDeath.isDead)
+        {
+            anim.SetBool("isMoving", false);
+            return;
+        }
+
         #region ENEMY CHASE LOGIC
         bool canSeePlayer = CanSeePlayer();
 
@@ -152,13 +173,43 @@ public class EnemyPatrol : MonoBehaviour
                 enemy.localScale = new Vector3(Mathf.Abs(initScale.x), initScale.y, initScale.z);
             }
 
+            if (IsTouchingWall())
+            {
+                isChasingPlayer = false;
+                waitingAtWall = true;
+                anim.SetBool("isMoving", false);
+                return;
+            }
+
             enemy.position += direction * currentSpeed * Time.deltaTime;
             return;
         }
         #endregion
 
+
         #region ENEMY PATROL LOGIC
         // 🧠 PATROL
+
+        if (IsTouchingWall())
+        {
+            waitingAtWall = true;
+            anim.SetBool("isMoving", false);
+        }
+
+        if (waitingAtWall)
+        {
+            idleTimer += Time.deltaTime;
+
+            if (idleTimer >= idleDuration)
+            {
+                movingLeft = !movingLeft;
+                idleTimer = 0;
+                waitingAtWall = false;
+            }
+
+            return;
+        }
+
         if (movingLeft)
         {
             if (enemy.position.x >= leftEdge.position.x)
@@ -174,6 +225,7 @@ public class EnemyPatrol : MonoBehaviour
                 ChangeDirection();
         }
         #endregion
+
 
         #region GAME OVER CHECK
         if (GameManager.instance.isGameOver)
@@ -209,7 +261,12 @@ public class EnemyPatrol : MonoBehaviour
         idleTimer += Time.deltaTime;
 
         if (idleTimer > idleDuration)
+        {
             movingLeft = !movingLeft;
+            idleTimer = 0;
+            waitingAtWall = false;
+        }
+
     }
 
     private void MoveInDirection(int _direction)
@@ -225,6 +282,19 @@ public class EnemyPatrol : MonoBehaviour
         enemy.position += direction * currentSpeed * Time.deltaTime;
     }
     #endregion
+    private bool IsTouchingWall()
+    {
+        if (wallCheck == null) return false;
+
+        Vector2 direction = movingLeft ? Vector2.left : Vector2.right;
+
+        return Physics2D.Raycast(
+            wallCheck.position,
+            direction,
+            wallCheckDistance,
+            wallLayer
+        );
+    }
 
     // 👁️ DEBUG
     private void OnDrawGizmosSelected()

@@ -298,12 +298,18 @@ public class PlayerMovement_02 : MonoBehaviour
 		//Convert this to a vector and apply to rigidbody
 		RB.AddForce(movement * Vector2.right, ForceMode2D.Force);
 
-		/*
+        /*
 		 * For those interested here is what AddForce() will do
 		 * RB.velocity = new Vector2(RB.velocity.x + (Time.fixedDeltaTime  * speedDif * accelRate) / RB.mass, RB.velocity.y);
 		 * Time.fixedDeltaTime is by default in Unity 0.02 seconds equal to 50 FixedUpdate() calls per second
 		*/
-	}
+
+        // IMPORTANT FIX
+        if (LastOnGroundTime > 0 && Mathf.Abs(_moveInput.x) < 0.01f && Mathf.Abs(RB.linearVelocity.x) < 0.15f)
+        {
+            RB.linearVelocity = new Vector2(0f, RB.linearVelocity.y);
+        }
+    }
 
 	private void Turn()
 	{
@@ -430,13 +436,22 @@ public class PlayerMovement_02 : MonoBehaviour
 		if (IsWallJumping) return;
 
         // Speed
-        anim.SetFloat("Run", Mathf.Abs(RB.linearVelocity.x));
+        //anim.SetFloat("Run", Mathf.Abs(RB.linearVelocity.x));
         //Debug.Log(RB.linearVelocity.x);
         //anim.SetFloat("Run", movement);
 
         // Ground
         bool isGrounded = LastOnGroundTime > 0;
-		anim.SetBool("isGrounded", isGrounded);
+
+        float runValue = 0f;
+
+        if (Mathf.Abs(_moveInput.x) > 0.01f && Mathf.Abs(RB.linearVelocity.x) > 0.15f)
+        {
+            runValue = Mathf.Abs(RB.linearVelocity.x);
+        }
+
+        anim.SetFloat("Run", runValue);
+        anim.SetBool("isGrounded", isGrounded);
 
 		// Jump / Fall
 		//anim.SetFloat("yVelocity", RB.linearVelocity.y);
@@ -450,7 +465,7 @@ public class PlayerMovement_02 : MonoBehaviour
 
 	private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             anim.SetBool("isGrounded", true);
         }

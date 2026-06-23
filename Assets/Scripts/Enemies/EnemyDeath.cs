@@ -8,12 +8,13 @@ public class EnemyDeath : MonoBehaviour, IResettable
     [Header("Respawn Settings")]
     public Transform respawnPoint;
 
-    private bool isDead;
+    public bool isDead;
 
     [Header("Flashing Settings")]
     [SerializeField] private SpriteColorFlasher spriteColorFlasher;
     private SpriteRenderer spriteRend; 
 
+    private EnemyPatrol enemyPatrol;
 
     private void Awake()
     {
@@ -21,6 +22,7 @@ public class EnemyDeath : MonoBehaviour, IResettable
         body = GetComponent<Rigidbody2D>();
         spriteColorFlasher = GetComponent<SpriteColorFlasher>();
         spriteRend = GetComponentInChildren<SpriteRenderer>();
+        enemyPatrol = GetComponentInParent<EnemyPatrol>();
     }
 
     private void Start()
@@ -59,6 +61,11 @@ public class EnemyDeath : MonoBehaviour, IResettable
     {
         if (isDead) return;
         isDead = true;
+        
+        GetComponentInParent<EnemyPatrol>().enabled = false; // stop patrol immediately
+
+        anim.SetBool("isMoving", false);
+        anim.SetTrigger("die");
 
         Debug.Log("Enemy died");
 
@@ -66,9 +73,9 @@ public class EnemyDeath : MonoBehaviour, IResettable
 
         spriteColorFlasher.FlashColor(spriteRend, 0.5f, Color.white);
 
-        anim.SetTrigger("die");
         Invoke(nameof(HideEnemy), 1f); // match animation length
 
+        //GetComponent<Collider2D>().enabled = false;
         body.linearVelocity = Vector2.zero;
         body.bodyType = RigidbodyType2D.Dynamic;
 
