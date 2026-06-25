@@ -59,6 +59,8 @@ public class EnemyDeath : MonoBehaviour, IResettable
 
     public void Die()
     {
+        LevelStats.instance.enemiesKilled++;
+
         if (isDead) return;
         isDead = true;
         

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,6 +14,14 @@ public class GameManager : MonoBehaviour
     //public Door exitDoor;
     private int totalEnemies;
     private int deadEnemies;
+
+
+    [Header("Level Complete")]
+    [SerializeField] private float victoryCheckDelay = 1f;
+    [SerializeField] private VictoryScreen victoryScreen;
+    [SerializeField] private LevelData levelData;
+
+    private bool levelCompleted = false;
 
     private void Awake()
     {
@@ -43,16 +52,12 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        if (isGameOver) return; // prevent double trigger
+        if (isGameOver) return;
 
         isGameOver = true;
 
         Debug.Log("GAME OVER");
 
-        //Stop all enemies / systems
-        //Time.timeScale = 0f; // optional freeze
-
-        // Or instead of freeze, you can reset:
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
@@ -69,14 +74,33 @@ public class GameManager : MonoBehaviour
     // 🔥 NEW FUNCTION
     public void EnemyDied()
     {
+        if (levelCompleted) return;
+        if (isGameOver) return;
+
         deadEnemies++;
 
         Debug.Log("Enemies killed: " + deadEnemies);
 
         if (deadEnemies >= totalEnemies)
         {
-            LoadNextLevel();
+            StartCoroutine(CheckVictoryAfterDelay());
         }
+    }
+
+    private IEnumerator CheckVictoryAfterDelay()
+    {
+        levelCompleted = true;
+
+        yield return new WaitForSeconds(victoryCheckDelay);
+
+        if (isGameOver)
+        {
+            levelCompleted = false;
+            yield break;
+        }
+
+        SaveManager.UnlockNextLevel(levelData.levelNumber);
+        victoryScreen.Show(levelData, true, deadEnemies, totalEnemies);
     }
 
     /*public bool AreAllEnemiesDead()
@@ -105,8 +129,10 @@ public class GameManager : MonoBehaviour
         Invoke(nameof(LoadNextLevel), 1.5f); // small delay
     }*/
 
-    private void LoadNextLevel()
+    public void GoToNextLevel()
     {
+        Time.timeScale = 1f;
+
         int current = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(current + 1);
     }

@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: 333b5ade1e438c64aaf20589d3f5819d
+guid: 5e3df42045af55e4ea89a1822d257d62
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -9219880731856953456
-    second: Cat_Idle_Sprite_Sheet 1_0
-  - first:
-      213: 8161556194046075323
-    second: Cat_Idle_Sprite_Sheet 1_1
-  - first:
-      213: -111730549307831081
-    second: Cat_Idle_Sprite_Sheet 1_2
-  - first:
-      213: 1573571728525655560
-    second: Cat_Idle_Sprite_Sheet 1_3
+      213: 7969567969453657338
+    second: star 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -60,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 300
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -122,89 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Cat_Idle_Sprite_Sheet 1_0
+      name: star 1_0
       rect:
         serializedVersion: 2
-        x: 102
-        y: 92
-        width: 89
-        height: 143
-      alignment: 9
-      pivot: {x: 0.5123811, y: 0.5726025}
+        x: 5
+        y: 15
+        width: 502
+        height: 482
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 09f923ac2576c0080800000000000000
-      internalID: -9219880731856953456
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Cat_Idle_Sprite_Sheet 1_1
-      rect:
-        serializedVersion: 2
-        x: 206
-        y: 91
-        width: 85
-        height: 137
-      alignment: 9
-      pivot: {x: 0.5249907, y: 0.6056307}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: bb16180ed1ca34170800000000000000
-      internalID: 8161556194046075323
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Cat_Idle_Sprite_Sheet 1_2
-      rect:
-        serializedVersion: 2
-        x: 316
-        y: 90
-        width: 85
-        height: 137
-      alignment: 9
-      pivot: {x: 0.51296353, y: 0.5953092}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7dc82f948ad037ef0800000000000000
-      internalID: -111730549307831081
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Cat_Idle_Sprite_Sheet 1_3
-      rect:
-        serializedVersion: 2
-        x: 430
-        y: 90
-        width: 85
-        height: 137
-      alignment: 9
-      pivot: {x: 0.5305355, y: 0.6165328}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 80e7e53662376d510800000000000000
-      internalID: 1573571728525655560
+      spriteID: afccd98f7d7999e60800000000000000
+      internalID: 7969567969453657338
       vertices: []
       indices: 
       edges: []
@@ -213,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: da0f5e1a535dd4749a6f1d78732be885
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -223,10 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Cat_Idle_Sprite_Sheet 1_0: -9219880731856953456
-      Cat_Idle_Sprite_Sheet 1_1: 8161556194046075323
-      Cat_Idle_Sprite_Sheet 1_2: -111730549307831081
-      Cat_Idle_Sprite_Sheet 1_3: 1573571728525655560
+      star 1_0: 7969567969453657338
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

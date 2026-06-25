@@ -35,6 +35,8 @@ public class PlayerDeath : MonoBehaviour
 
     public void Die()
     {
+        LevelStats.instance.RegisterDeath();
+
         if (isDead) return;
         isDead = true;
 
