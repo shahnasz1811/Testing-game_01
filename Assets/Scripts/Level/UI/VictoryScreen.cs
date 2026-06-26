@@ -41,6 +41,19 @@ public class VictoryScreen : MonoBehaviour
         bool earnedTimeStar = finalTime <= levelData.targetTime;
         bool earnedDeathStar = deaths <= levelData.maxDeathsForStar;
 
+        int starsEarned = 0;
+
+        if (earnedObjectiveStar)
+            starsEarned++;
+
+        if (earnedTimeStar)
+            starsEarned++;
+
+        if (earnedDeathStar)
+            starsEarned++;
+
+        SaveManager.SaveStars(levelData.levelNumber, starsEarned);
+
         objectiveValueText.text = $"Enemies Defeated: {enemiesKilled} / {totalEnemies}";
         timeValueText.text = $"{FormatTime(finalTime)} / {FormatTime(levelData.targetTime)}";
         deathValueText.text = $"{deaths} / {levelData.maxDeathsForStar} Allowed";

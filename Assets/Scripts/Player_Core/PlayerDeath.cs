@@ -35,10 +35,10 @@ public class PlayerDeath : MonoBehaviour
 
     public void Die()
     {
-        LevelStats.instance.RegisterDeath();
-
         if (isDead) return;
         isDead = true;
+
+        LevelStats.instance.RegisterDeath();
 
         movement.IsDead = true;
 
@@ -66,7 +66,10 @@ public class PlayerDeath : MonoBehaviour
     {
         yield return new WaitForSeconds(deathDelay);
 
-        GameManager.instance.GameOver();
+        //GameManager.instance.GameOver();
+        GameManager.instance.ResetAll();
+
+        Respawn();
 
         // OPTION 1: Reload scene
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -79,15 +82,21 @@ public class PlayerDeath : MonoBehaviour
     {
         transform.position = respawnPoint.position;
 
-        // Re-enable physics
         rb.simulated = true;
+        rb.linearVelocity = Vector2.zero;
 
-        // Enable movement
-        movement.enabled = true;
-
-        // Enable collider
         GetComponent<Collider2D>().enabled = true;
 
+        movement.enabled = true;
+        movement.IsDead = false;
+
+        if (anim != null)
+            anim.ResetTrigger("die");
+
+        anim.Play("Idle", 0, 0f);
+
         isDead = false;
+
+        Debug.Log("Player Respawned");
     }
 }

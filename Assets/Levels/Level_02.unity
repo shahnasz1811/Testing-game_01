@@ -213,6 +213,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8de908ea0c9c0084ca9a8d829dce8407, type: 3}
+--- !u!4 &148824075 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7490935915089467899, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
+  m_PrefabInstance: {fileID: 1344106849}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &287082294
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1085,6 +1090,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LevelCore
       objectReference: {fileID: 0}
+    - target: {fileID: 3179454490412428740, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
+      propertyPath: respawnPoint
+      value: 
+      objectReference: {fileID: 148824075}
     - target: {fileID: 5562692383138339793, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: m_LocalPosition.x
       value: -11.74619
@@ -8505,6 +8514,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1114069609}
     m_Modifications:
+    - target: {fileID: 3988624674168233011, guid: 217c08efdd7737b47831b78d0dd592e4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.21
+      objectReference: {fileID: 0}
     - target: {fileID: 5353460659431915725, guid: 217c08efdd7737b47831b78d0dd592e4, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.72
@@ -8570,6 +8583,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1114069609}
     m_Modifications:
+    - target: {fileID: 1683191864713485563, guid: 217c08efdd7737b47831b78d0dd592e4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.663
+      objectReference: {fileID: 0}
     - target: {fileID: 2191005285428073324, guid: 217c08efdd7737b47831b78d0dd592e4, type: 3}
       propertyPath: alertDuration
       value: 0.5

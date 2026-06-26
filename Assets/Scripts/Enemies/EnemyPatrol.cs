@@ -67,7 +67,7 @@ public class EnemyPatrol : MonoBehaviour
             playerTransform = player.transform;
 
         RB = GetComponent<Rigidbody2D>();
-        enemyDeath = GetComponent<EnemyDeath>();
+        enemyDeath = GetComponentInChildren<EnemyDeath>();
 
         if (enemyDeath == null)
         {
