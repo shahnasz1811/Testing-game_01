@@ -21,6 +21,7 @@ public class PlayerDeath : MonoBehaviour
         movement = GetComponent<PlayerMovement_02>();
     }
 
+    [System.Obsolete]
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (isDead) return;
@@ -33,12 +34,15 @@ public class PlayerDeath : MonoBehaviour
         }
     }
 
+    [System.Obsolete]
     public void Die()
     {
         if (isDead) return;
         isDead = true;
 
+        GameManager.instance.GameOver();
         LevelStats.instance.RegisterDeath();
+        GameManager.instance.totalDeaths++;
 
         movement.IsDead = true;
 
@@ -62,14 +66,14 @@ public class PlayerDeath : MonoBehaviour
         StartCoroutine(DeathRoutine());
     }
 
+    [System.Obsolete]
     private IEnumerator DeathRoutine()
     {
         yield return new WaitForSeconds(deathDelay);
 
+        Respawn();
         //GameManager.instance.GameOver();
         GameManager.instance.ResetAll();
-
-        Respawn();
 
         // OPTION 1: Reload scene
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -78,6 +82,7 @@ public class PlayerDeath : MonoBehaviour
         //Respawn();
     }
 
+    [System.Obsolete]
     private void Respawn()
     {
         transform.position = respawnPoint.position;
@@ -96,6 +101,10 @@ public class PlayerDeath : MonoBehaviour
         anim.Play("Idle", 0, 0f);
 
         isDead = false;
+
+        //GameManager.instance.isGameOver = false;
+        GameManager.instance.ResetGameState();
+        GameManager.instance.RecalculateEnemies();
 
         Debug.Log("Player Respawned");
     }

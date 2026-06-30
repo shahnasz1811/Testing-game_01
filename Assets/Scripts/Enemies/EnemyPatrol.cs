@@ -66,7 +66,7 @@ public class EnemyPatrol : MonoBehaviour
         if (player != null)
             playerTransform = player.transform;
 
-        RB = GetComponent<Rigidbody2D>();
+        RB = GetComponentInChildren<Rigidbody2D>();
         enemyDeath = GetComponentInChildren<EnemyDeath>();
 
         if (enemyDeath == null)
@@ -82,6 +82,14 @@ public class EnemyPatrol : MonoBehaviour
 
     private void Update()
     {
+        // 🔥 STEP 3: Re-assign player AFTER respawn
+        if (playerTransform == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+                playerTransform = player.transform;
+        }
+
         if (enemyDeath != null && enemyDeath.isDead)
         {
             anim.SetBool("isMoving", false);
@@ -133,7 +141,7 @@ public class EnemyPatrol : MonoBehaviour
         }
 
         // 🏃 HANDLE CHASE
-        if (isChasingPlayer)
+        if (isChasingPlayer && playerTransform != null)
         {
             if (canSeePlayer)
             {
@@ -162,7 +170,7 @@ public class EnemyPatrol : MonoBehaviour
 
             Vector3 direction;
 
-            if (enemy.position.x > playerTransform.position.x)
+            if (playerTransform != null && enemy.position.x > playerTransform.position.x)
             {
                 direction = Vector3.left;
                 enemy.localScale = new Vector3(-Mathf.Abs(initScale.x), initScale.y, initScale.z);
@@ -294,6 +302,31 @@ public class EnemyPatrol : MonoBehaviour
             wallCheckDistance,
             wallLayer
         );
+    }
+
+    public void ResetAI()
+    {
+        isChasingPlayer = false;
+        isAlerting = false;
+
+        alertTimer = 0f;
+        loseSightTimer = 0f;
+
+        waitingAtWall = false;
+
+        currentSpeed = patrolSpeed;
+
+        // Reset movement direction (optional)
+        movingLeft = false;
+
+        // Reset animation
+        if (anim != null)
+            anim.SetBool("isMoving", false);
+
+        // 🔥 VERY IMPORTANT: reset player reference
+        playerTransform = null;
+
+        RB.linearVelocity = Vector2.zero;
     }
 
     // 👁️ DEBUG

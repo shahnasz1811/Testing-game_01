@@ -15,6 +15,7 @@ public class EnemyDeath : MonoBehaviour, IResettable
     private SpriteRenderer spriteRend; 
 
     private EnemyPatrol enemyPatrol;
+    private bool hasCountedKill = false;
 
     private void Awake()
     {
@@ -27,14 +28,7 @@ public class EnemyDeath : MonoBehaviour, IResettable
 
     private void Start()
     {
-        if (GameManager.instance != null)
-        {
-            GameManager.instance.RegisterResettable(this);
-        }
-        else
-        {
-            Debug.LogError("GameManager instance is NULL!");
-        }
+        GameManager.instance.RegisterResettable(this);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -59,10 +53,17 @@ public class EnemyDeath : MonoBehaviour, IResettable
 
     public void Die()
     {
-        LevelStats.instance.enemiesKilled++;
-
         if (isDead) return;
+
         isDead = true;
+
+        if (!hasCountedKill)
+        {
+            hasCountedKill = true;
+            GameManager.instance.EnemyDied();
+        }
+
+        Debug.Log("DIE called on: " + gameObject.name);
         
         GetComponentInParent<EnemyPatrol>().enabled = false; // stop patrol immediately
 
@@ -70,8 +71,6 @@ public class EnemyDeath : MonoBehaviour, IResettable
         anim.SetTrigger("die");
 
         Debug.Log("Enemy died");
-
-        GameManager.instance.EnemyDied();
 
         spriteColorFlasher.FlashColor(spriteRend, 0.5f, Color.white);
 
@@ -106,14 +105,22 @@ public class EnemyDeath : MonoBehaviour, IResettable
     {
         if (isDead)
         {
-            CancelInvoke(); // stops any pending respawn
+            CancelInvoke();
+
             isDead = false;
+            hasCountedKill = false; // ✅ ADD THIS
+
             transform.position = respawnPoint.position;
             body.bodyType = RigidbodyType2D.Dynamic;
-            gameObject.SetActive(true); // show enemy again
+            gameObject.SetActive(true);
+
+            enemyPatrol.enabled = true;
+            enemyPatrol.ResetAI();
+
             Debug.Log("Enemy reset");
         }
     }
+
 
     /*public void ResetEnemy()
     {

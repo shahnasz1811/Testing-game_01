@@ -20,6 +20,11 @@ public class MainMenuManager : MonoBehaviour
         SceneManager.LoadScene(1); // LevelSelect
     }
 
+    public void OpenLeaderboard()
+    {
+        SceneManager.LoadScene(7); //Leaderboard 
+    }
+
     public void QuitGame()
     {
         Application.Quit();

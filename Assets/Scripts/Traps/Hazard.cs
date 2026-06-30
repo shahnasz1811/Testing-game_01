@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Hazard : MonoBehaviour
 {
+    [System.Obsolete]
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Try PLAYER

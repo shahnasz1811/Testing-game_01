@@ -4,6 +4,7 @@ using UnityEngine;
 public class LevelData : ScriptableObject
 {
     public int levelNumber;
+    public bool isFinalLevel = false;
 
     [Header("Star Requirements")]
     public float targetTime = 60f;
