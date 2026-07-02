@@ -5,16 +5,15 @@ public class LeaderboardManager : MonoBehaviour
 {
     public static LeaderboardManager instance;
 
-private LeaderboardData leaderboard = new LeaderboardData();
-
-    private string saveKey = "LEADERBOARD";
+private LeaderboardData data = new LeaderboardData();
+    private string key = "LEADERBOARD";
 
     void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // 🔥 KEEP DATA ACROSS SCENES
+            DontDestroyOnLoad(gameObject);
             Load();
         }
         else
@@ -25,46 +24,35 @@ private LeaderboardData leaderboard = new LeaderboardData();
 
     public void AddEntry(string name, int score)
     {
-        LeaderboardEntry entry = new LeaderboardEntry
-        {
-            playerName = name,
-            score = score
-        };
+        data.entries.Add(new LeaderboardEntry(name, score));
 
-        leaderboard.entries.Add(entry);
+        data.entries.Sort((a, b) => b.score.CompareTo(a.score));
 
-        // Sort (highest score first)
-        leaderboard.entries.Sort((a, b) => b.score.CompareTo(a.score));
-
-        // Keep top 10
-        if (leaderboard.entries.Count > 10)
-            leaderboard.entries.RemoveAt(10);
+        if (data.entries.Count > 10)
+            data.entries.RemoveAt(10);
 
         Save();
     }
 
     public List<LeaderboardEntry> GetEntries()
     {
-        return leaderboard.entries;
+        return data.entries;
     }
 
-    private void Save()
+    void Save()
     {
-        string json = JsonUtility.ToJson(leaderboard);
-        PlayerPrefs.SetString(saveKey, json);
+        string json = JsonUtility.ToJson(data);
+        PlayerPrefs.SetString(key, json);
         PlayerPrefs.Save();
     }
 
-    private void Load()
+    void Load()
     {
-        if (PlayerPrefs.HasKey(saveKey))
+        if (PlayerPrefs.HasKey(key))
         {
-            string json = PlayerPrefs.GetString(saveKey);
-            leaderboard = JsonUtility.FromJson<LeaderboardData>(json);
-        }
-        else
-        {
-            leaderboard = new LeaderboardData();
+            data = JsonUtility.FromJson<LeaderboardData>(
+                PlayerPrefs.GetString(key)
+            );
         }
     }
 }

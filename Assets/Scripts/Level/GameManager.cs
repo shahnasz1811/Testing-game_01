@@ -160,6 +160,8 @@ public class GameManager : MonoBehaviour
                 finalScore
             );
 
+            yield return new WaitForSeconds(2f);
+
             SceneManager.LoadScene("LeaderboardScene");
         }
         else
