@@ -1,21 +1,20 @@
 using UnityEngine;
 
-public class PlayerProfile : MonoBehaviour
+public static class PlayerProfile
 {
-    public static string PlayerName;
+    public static string PlayerName = "Player";
 
-private void Awake()
-    {
-        if (PlayerPrefs.HasKey("PlayerName"))
-        {
-            PlayerName = PlayerPrefs.GetString("PlayerName");
-        }
-    }
-
-    public void SetPlayerName(string name)
+    public static void SetName(string name)
     {
         PlayerName = name;
-        PlayerPrefs.SetString("PlayerName", name);
-        PlayerPrefs.Save();
+        PlayerPrefs.SetString("PLAYER_NAME", name);
+    }
+
+    public static void Load()
+    {
+        if (PlayerPrefs.HasKey("PLAYER_NAME"))
+        {
+            PlayerName = PlayerPrefs.GetString("PLAYER_NAME");
+        }
     }
 }

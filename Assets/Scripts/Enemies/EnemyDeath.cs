@@ -28,7 +28,7 @@ public class EnemyDeath : MonoBehaviour, IResettable
 
     private void Start()
     {
-        GameManager.instance.RegisterResettable(this);
+        LevelManager.instance.RegisterResettable(this);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -60,7 +60,7 @@ public class EnemyDeath : MonoBehaviour, IResettable
         if (!hasCountedKill)
         {
             hasCountedKill = true;
-            GameManager.instance.EnemyDied();
+            LevelManager.instance.EnemyDied();
         }
 
         Debug.Log("DIE called on: " + gameObject.name);
@@ -80,7 +80,8 @@ public class EnemyDeath : MonoBehaviour, IResettable
         body.linearVelocity = Vector2.zero;
         body.bodyType = RigidbodyType2D.Dynamic;
 
-        Debug.Log(string.Join(", ", GameManager.instance.resettables));
+        //Debug.Log(string.Join(", ", LevelManager.instance.resettables));
+        Debug.Log("Resettable count: " + LevelManager.instance.resettables.Count);
     }
 
     /*private void Respawn()

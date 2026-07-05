@@ -40,9 +40,9 @@ public class PlayerDeath : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
-        GameManager.instance.GameOver();
+        LevelManager.instance.GameOver();
+        //LevelStats.instance.RegisterDeath();
         LevelStats.instance.RegisterDeath();
-        GameManager.instance.totalDeaths++;
 
         movement.IsDead = true;
 
@@ -73,7 +73,7 @@ public class PlayerDeath : MonoBehaviour
 
         Respawn();
         //GameManager.instance.GameOver();
-        GameManager.instance.ResetAll();
+        LevelManager.instance.ResetAll();
 
         // OPTION 1: Reload scene
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -103,8 +103,8 @@ public class PlayerDeath : MonoBehaviour
         isDead = false;
 
         //GameManager.instance.isGameOver = false;
-        GameManager.instance.ResetGameState();
-        GameManager.instance.RecalculateEnemies();
+        LevelManager.instance.ResetGameState();
+        LevelManager.instance.RecalculateEnemies();
 
         Debug.Log("Player Respawned");
     }

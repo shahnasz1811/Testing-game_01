@@ -5,7 +5,7 @@ public class LeaderboardManager : MonoBehaviour
 {
     public static LeaderboardManager instance;
 
-private LeaderboardData data = new LeaderboardData();
+    private LeaderboardData data = new LeaderboardData();
     private string key = "LEADERBOARD";
 
     void Awake()
@@ -20,16 +20,23 @@ private LeaderboardData data = new LeaderboardData();
         {
             Destroy(gameObject);
         }
+
+        //Destroy(gameObject, 0.1f);
     }
 
-    public void AddEntry(string name, int score)
+    void Update()
     {
-        data.entries.Add(new LeaderboardEntry(name, score));
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            ClearLeaderboard();
+        }
+    }
+
+    public void AddEntry(string name, float time, int deaths, int score)
+    {
+        data.entries.Add(new LeaderboardEntry(name, time, deaths, score));
 
         data.entries.Sort((a, b) => b.score.CompareTo(a.score));
-
-        if (data.entries.Count > 10)
-            data.entries.RemoveAt(10);
 
         Save();
     }
@@ -54,5 +61,15 @@ private LeaderboardData data = new LeaderboardData();
                 PlayerPrefs.GetString(key)
             );
         }
+    }
+
+    public void ClearLeaderboard()
+    {
+        data.entries.Clear();
+        PlayerPrefs.DeleteKey(key);
+        PlayerPrefs.Save();
+        Debug.Log("Leaderboard cleared.");
+
+        FindObjectOfType<LeaderboardUI>().RefreshUI();
     }
 }

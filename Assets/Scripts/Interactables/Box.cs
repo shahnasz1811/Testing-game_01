@@ -7,7 +7,7 @@ public class Box : MonoBehaviour, IResettable
     private void Start()
     {
         startPos = transform.position;
-        GameManager.instance.RegisterResettable(this);
+        LevelManager.instance.RegisterResettable(this);
     }
 
     public void ResetState()

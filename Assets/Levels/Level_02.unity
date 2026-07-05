@@ -1106,6 +1106,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 3.40171
       objectReference: {fileID: 0}
+    - target: {fileID: 5769860080966063246, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
+      propertyPath: levelData
+      value: 
+      objectReference: {fileID: 11400000, guid: 7021f475457ba0e499fbe97a09496fae, type: 2}
     - target: {fileID: 6517751955691789503, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: orthographic size
       value: 6.75

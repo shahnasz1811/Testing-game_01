@@ -8,23 +8,23 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public List<IResettable> resettables = new List<IResettable>();
-    public bool isGameOver = false;
+    //public bool isGameOver = false;
     
     //public int areaIndex;
     //public Door exitDoor;
-    private int totalEnemies;
-    private int deadEnemies;
+    //private int totalEnemies;
+    //private int deadEnemies;
     public float totalRunTime = 0f;
     public int totalDeaths = 0;
 
 
-    [Header("Level Complete")]
+    /*[Header("Level Complete")]
     [SerializeField] private float victoryCheckDelay = 1f;
     [SerializeField] private VictoryScreen victoryScreen;
     [SerializeField] private LevelData levelData;
 
     private Coroutine victoryCoroutine;
-    private bool levelCompleted = false;
+    private bool levelCompleted = false;*/
 
     private void Awake()
     {
@@ -32,6 +32,8 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject); // 🔥 keeps data across levels
+
+            GameManager.instance.StartNewRun();
         }
         else
         {
@@ -39,20 +41,47 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-    [System.Obsolete]
-    void Start()
+    public void StartNewRun()
     {
-        RecalculateEnemies();
+        totalRunTime = 0f;
+        totalDeaths = 0;
+
+        Debug.Log("✅ New run started");
     }
 
-    void Update()
+    public void AddLevelStats(float time, int deaths)
+    {
+        totalRunTime += time;
+        totalDeaths += deaths;
+
+        Debug.Log("TOTAL TIME: " + totalRunTime);
+        Debug.Log("TOTAL DEATHS: " + totalDeaths);
+    }
+
+
+
+    /*[System.Obsolete]
+void Start()
+{
+    RecalculateEnemies();
+}*/
+
+    /*void Update()
     {
         if (!isGameOver && !levelCompleted)
         {
             totalRunTime += Time.deltaTime;
         }
-    }
+
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            StartCoroutine(CheckVictoryAfterDelay());
+            LeaderboardManager.instance.ClearLeaderboard();
+        }
+
+        Debug.Log("TIME: " + totalRunTime);
+        Debug.Log("GameManager instance: " + this);
+    }*/
 
     public int CalculateScore()
     {
@@ -64,19 +93,19 @@ public class GameManager : MonoBehaviour
         return Mathf.Max(0, baseScore - timePenalty - deathPenalty);
     }
 
-    public void RegisterResettable(IResettable obj)
+    /*public void RegisterResettable(IResettable obj)
     {
         if (!resettables.Contains(obj))
             resettables.Add(obj);
     }
 
-    public void GameOver()
+    /*public void GameOver()
     {
         if (isGameOver) return;
 
         isGameOver = true;
 
-        // 🔥 HARD CANCEL victory
+        /* 🔥 HARD CANCEL victory
         if (victoryCoroutine != null)
         {
             StopCoroutine(victoryCoroutine);
@@ -85,10 +114,10 @@ public class GameManager : MonoBehaviour
         }
 
         Debug.Log("GAME OVER");
-    }
+    }*/
 
     [System.Obsolete]
-    public void ResetAll()
+    /*public void ResetAll()
     {
         foreach (IResettable obj in resettables)
         {
@@ -98,10 +127,10 @@ public class GameManager : MonoBehaviour
         deadEnemies = 0;
 
         RecalculateEnemies();
-    }
+    }*/
 
     // 🔥 NEW FUNCTION
-    public void EnemyDied()
+    /*public void EnemyDied()
     {
         if (isGameOver) return;
 
@@ -149,20 +178,30 @@ public class GameManager : MonoBehaviour
             yield break;
         }
 
-        SaveManager.UnlockNextLevel(levelData.levelNumber);
+    SaveManager.UnlockNextLevel(levelData.levelNumber);
 
         if (levelData.isFinalLevel)
         {
+            levelCompleted = true;
             int finalScore = GameManager.instance.CalculateScore();
+
+            Debug.Log("Is Final Level triggered");
+
+            if (LeaderboardManager.instance == null)
+            {
+                Debug.LogError("LeaderboardManager is NULL!");
+            }
 
             LeaderboardManager.instance.AddEntry(
                 PlayerProfile.PlayerName,
+                GameManager.instance.totalRunTime, // ✅ FIX
+                GameManager.instance.totalDeaths,
                 finalScore
             );
 
             yield return new WaitForSeconds(2f);
 
-            SceneManager.LoadScene("LeaderboardScene");
+            SceneManager.LoadScene("Leaderboard");
         }
         else
         {
@@ -170,7 +209,7 @@ public class GameManager : MonoBehaviour
         }
 
         victoryCoroutine = null;
-    }
+    }*/
 
     /*public bool AreAllEnemiesDead()
     {
@@ -198,7 +237,7 @@ public class GameManager : MonoBehaviour
         Invoke(nameof(LoadNextLevel), 1.5f); // small delay
     }*/
 
-    public void ResetGameState()
+    /*public void ResetGameState()
     {
         isGameOver = false;
         levelCompleted = false;
@@ -208,9 +247,9 @@ public class GameManager : MonoBehaviour
             StopCoroutine(victoryCoroutine);
             victoryCoroutine = null;
         }
-    }
+    }*/
 
-    [System.Obsolete]
+    /*[System.Obsolete]
     public void RecalculateEnemies()
     {
         EnemyDeath[] enemies = FindObjectsOfType<EnemyDeath>();
@@ -232,7 +271,7 @@ public class GameManager : MonoBehaviour
             if (victoryCoroutine == null && !isGameOver)
                 victoryCoroutine = StartCoroutine(CheckVictoryAfterDelay());
         }
-    }
+    }*/
 
     public void GoToLeaderboard()
     {

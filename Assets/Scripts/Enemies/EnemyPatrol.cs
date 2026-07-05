@@ -236,7 +236,7 @@ public class EnemyPatrol : MonoBehaviour
 
 
         #region GAME OVER CHECK
-        if (GameManager.instance.isGameOver)
+        if (LevelManager.instance.isGameOver)
         {
             RB.linearVelocity = Vector2.zero;
             return;
