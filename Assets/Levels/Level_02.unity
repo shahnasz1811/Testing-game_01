@@ -8611,8 +8611,16 @@ PrefabInstance:
       value: -0.663
       objectReference: {fileID: 0}
     - target: {fileID: 2191005285428073324, guid: 217c08efdd7737b47831b78d0dd592e4, type: 3}
+      propertyPath: viewAngle
+      value: 60.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2191005285428073324, guid: 217c08efdd7737b47831b78d0dd592e4, type: 3}
       propertyPath: alertDuration
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2191005285428073324, guid: 217c08efdd7737b47831b78d0dd592e4, type: 3}
+      propertyPath: pushBackForce
+      value: 0.005
       objectReference: {fileID: 0}
     - target: {fileID: 3988624674168233011, guid: 217c08efdd7737b47831b78d0dd592e4, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8620,7 +8628,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5353460659431915725, guid: 217c08efdd7737b47831b78d0dd592e4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.76
+      value: -1.922
       objectReference: {fileID: 0}
     - target: {fileID: 5777351271313646014, guid: 217c08efdd7737b47831b78d0dd592e4, type: 3}
       propertyPath: m_LocalPosition.x

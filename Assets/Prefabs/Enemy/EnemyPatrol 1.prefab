@@ -117,6 +117,7 @@ MonoBehaviour:
   chaseSpeed: 5
   acceleration: 3
   idleDuration: 1
+  stuckThreshold: 1.5
   anim: {fileID: 5520174095685627736}
   viewDistance: 3.63
   viewAngle: 56.4
