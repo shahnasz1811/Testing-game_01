@@ -21,7 +21,9 @@ public class EnemyPatrol : MonoBehaviour
 
     [Header("Idle Behaviour")]
     [SerializeField] private float idleDuration;
+    [SerializeField] private float stuckThreshold = 1.5f;
     private float idleTimer;
+    private float stuckTimer;
 
     [Header("Enemy Animator")]
     [SerializeField] private Animator anim;
@@ -198,9 +200,10 @@ public class EnemyPatrol : MonoBehaviour
         #region ENEMY PATROL LOGIC
         // 🧠 PATROL
 
-        if (IsTouchingWall())
+        if (IsTouchingWall() && !waitingAtWall)
         {
             waitingAtWall = true;
+            idleTimer = 0f; // reset timer ONCE
             anim.SetBool("isMoving", false);
         }
 
@@ -231,6 +234,23 @@ public class EnemyPatrol : MonoBehaviour
                 MoveInDirection(1);
             else
                 ChangeDirection();
+        }
+
+        if (RB.linearVelocity.x == 0)
+        {
+            stuckTimer += Time.deltaTime;
+
+            if (stuckTimer > stuckThreshold)
+            {
+                movingLeft = !movingLeft;
+                waitingAtWall = false;
+                idleTimer = 0;
+                stuckTimer = 0;
+            }
+        }
+        else
+        {
+            stuckTimer = 0;
         }
         #endregion
 
@@ -290,11 +310,36 @@ public class EnemyPatrol : MonoBehaviour
         enemy.position += direction * currentSpeed * Time.deltaTime;
     }
     #endregion
-    private bool IsTouchingWall()
+    /*private bool IsTouchingWall()
     {
         if (wallCheck == null) return false;
 
         Vector2 direction = movingLeft ? Vector2.left : Vector2.right;
+
+        return Physics2D.Raycast(
+            wallCheck.position,
+            direction,
+            wallCheckDistance,
+            wallLayer
+        );
+    }*/
+
+    private bool IsTouchingWall()
+    {
+        if (wallCheck == null) return false;
+
+        Vector2 direction;
+
+        if (isChasingPlayer && playerTransform != null)
+        {
+            direction = (playerTransform.position.x < enemy.position.x)
+                ? Vector2.left
+                : Vector2.right;
+        }
+        else
+        {
+            direction = movingLeft ? Vector2.left : Vector2.right;
+        }
 
         return Physics2D.Raycast(
             wallCheck.position,

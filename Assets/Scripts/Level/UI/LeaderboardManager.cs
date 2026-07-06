@@ -24,6 +24,7 @@ public class LeaderboardManager : MonoBehaviour
         //Destroy(gameObject, 0.1f);
     }
 
+    [System.Obsolete]
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.L))
@@ -63,6 +64,7 @@ public class LeaderboardManager : MonoBehaviour
         }
     }
 
+    [System.Obsolete]
     public void ClearLeaderboard()
     {
         data.entries.Clear();

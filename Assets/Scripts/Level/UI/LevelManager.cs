@@ -30,12 +30,21 @@ public class LevelManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-        
+
+    [System.Obsolete]
     void Start()
     {
         RecalculateEnemies();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            StartCoroutine(CheckVictoryAfterDelay());
+            //LeaderboardManager.instance.ClearLeaderboard();
+        }
+    }
     public void RegisterResettable(IResettable obj)
     {
         if (!resettables.Contains(obj))
@@ -122,6 +131,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    [System.Obsolete]
     public void ResetAll()
     {
         foreach (IResettable obj in resettables)
@@ -134,6 +144,7 @@ public class LevelManager : MonoBehaviour
         RecalculateEnemies();
     }
 
+    [System.Obsolete]
     public void RecalculateEnemies()
     {
         EnemyDeath[] enemies = FindObjectsOfType<EnemyDeath>();
