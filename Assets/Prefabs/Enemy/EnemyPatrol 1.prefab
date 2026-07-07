@@ -117,7 +117,6 @@ MonoBehaviour:
   chaseSpeed: 5
   acceleration: 3
   idleDuration: 1
-  stuckThreshold: 1.5
   anim: {fileID: 5520174095685627736}
   viewDistance: 3.63
   viewAngle: 56.4
@@ -199,6 +198,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5777351271313646014}
     m_Modifications:
+    - target: {fileID: 1789626701074354486, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: aecec8a3a8b3f5c4182e958efe33b60e, type: 2}
+    - target: {fileID: 1789626701487851566, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: aecec8a3a8b3f5c4182e958efe33b60e, type: 2}
     - target: {fileID: 1789626701735993212, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.55
@@ -271,6 +278,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 1789626701876574791, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: aecec8a3a8b3f5c4182e958efe33b60e, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -339,10 +350,10 @@ BoxCollider2D:
   m_Offset: {x: 0.030795038, y: 0.4126532}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
+    pivot: {x: 0.49671713, y: 0.14719671}
+    oldSize: {x: 1.97, y: 2.31}
+    newSize: {x: 1.97, y: 2.31}
+    adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
@@ -412,6 +423,7 @@ MonoBehaviour:
   respawnPoint: {fileID: 3988624674168233011}
   isDead: 0
   spriteColorFlasher: {fileID: 0}
+  dissolveDuration: 1
 --- !u!114 &2980814913447905075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -450,7 +462,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: aecec8a3a8b3f5c4182e958efe33b60e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -478,7 +490,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.65, y: 1.188}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0

@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 public class EnemyDeath : MonoBehaviour, IResettable
 {
@@ -12,7 +14,13 @@ public class EnemyDeath : MonoBehaviour, IResettable
 
     [Header("Flashing Settings")]
     [SerializeField] private SpriteColorFlasher spriteColorFlasher;
-    private SpriteRenderer spriteRend; 
+    private SpriteRenderer spriteRend;
+
+    [Header("Dissolve Settings")]
+    [SerializeField] private float dissolveDuration = 1f;
+
+    private Material mat;
+    private float dissolveAmount = 0f;
 
     private EnemyPatrol enemyPatrol;
     private bool hasCountedKill = false;
@@ -24,11 +32,22 @@ public class EnemyDeath : MonoBehaviour, IResettable
         spriteColorFlasher = GetComponent<SpriteColorFlasher>();
         spriteRend = GetComponentInChildren<SpriteRenderer>();
         enemyPatrol = GetComponentInParent<EnemyPatrol>();
+        mat = Instantiate(spriteRend.material);
+        spriteRend.material = mat;
     }
 
     private void Start()
     {
         LevelManager.instance.RegisterResettable(this);
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Color c = Color.red;
+            spriteRend.color = c;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -68,13 +87,20 @@ public class EnemyDeath : MonoBehaviour, IResettable
         GetComponentInParent<EnemyPatrol>().enabled = false; // stop patrol immediately
 
         anim.SetBool("isMoving", false);
-        anim.SetTrigger("die");
+        //anim.SetTrigger("die");
 
         Debug.Log("Enemy died");
 
-        spriteColorFlasher.FlashColor(spriteRend, 0.5f, Color.white);
+        //spriteColorFlasher.FlashColor(spriteRend, 0.5f, Color.white);
 
-        Invoke(nameof(HideEnemy), 1f); // match animation length
+        //spriteRend.material = mat;
+        //mat.SetFloat("_DissolveAmount", 0f);
+
+        Debug.Log("Dissolve started");
+        StartCoroutine(DissolveAndDie());
+        //Invoke(nameof(HideEnemy), 1f); // match animation length
+
+        //mat.SetFloat("_DissolveAmount", 1f);
 
         //GetComponent<Collider2D>().enabled = false;
         body.linearVelocity = Vector2.zero;
@@ -82,6 +108,30 @@ public class EnemyDeath : MonoBehaviour, IResettable
 
         //Debug.Log(string.Join(", ", LevelManager.instance.resettables));
         Debug.Log("Resettable count: " + LevelManager.instance.resettables.Count);
+    }
+
+    IEnumerator DissolveAndDie()
+    {
+        float time = 0f;
+
+        while (time < dissolveDuration)
+        {
+            time += Time.deltaTime;
+
+            dissolveAmount = time / dissolveDuration;
+
+            mat.SetFloat("_DissolveAmount", dissolveAmount); // 🔥 shader control
+
+
+            Debug.Log("Running dissolve...");
+            Debug.Log("Dissolve: " + dissolveAmount);
+
+            yield return null;
+        }
+
+        //mat.SetFloat("_DissolveAmount", 1f);
+
+        HideEnemy();
     }
 
     /*private void Respawn()
@@ -114,6 +164,9 @@ public class EnemyDeath : MonoBehaviour, IResettable
             transform.position = respawnPoint.position;
             body.bodyType = RigidbodyType2D.Dynamic;
             gameObject.SetActive(true);
+
+            // 🔥 RESET DISSOLVE
+            //mat.SetFloat("_DissolveAmount", 0f);
 
             enemyPatrol.enabled = true;
             enemyPatrol.ResetAI();
