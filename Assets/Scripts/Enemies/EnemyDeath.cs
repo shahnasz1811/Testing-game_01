@@ -166,7 +166,7 @@ public class EnemyDeath : MonoBehaviour, IResettable
             gameObject.SetActive(true);
 
             // 🔥 RESET DISSOLVE
-            //mat.SetFloat("_DissolveAmount", 0f);
+            mat.SetFloat("_DissolveAmount", 0f);
 
             enemyPatrol.enabled = true;
             enemyPatrol.ResetAI();

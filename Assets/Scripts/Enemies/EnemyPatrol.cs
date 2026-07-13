@@ -1,3 +1,5 @@
+using GLTFast.Schema;
+using NUnit.Framework.Internal;
 using UnityEngine;
 
 public class EnemyPatrol : MonoBehaviour
@@ -30,6 +32,7 @@ public class EnemyPatrol : MonoBehaviour
     [Header("Vision Cone")]
     public float viewDistance = 6f;
     [Range(0, 180)] public float viewAngle = 60f;
+    [SerializeField] private FieldOfView fieldOfView;
 
     private Transform playerTransform;
     public bool isChasingPlayer;
@@ -73,6 +76,13 @@ public class EnemyPatrol : MonoBehaviour
         {
             Debug.LogError("EnemyDeath script is missing on " + gameObject.name);
         }
+    }
+
+    /*private void Start()
+    {
+        mesh = new Mesh();
+        GetComponent<MeshFilter>().mesh = mesh;
+        origin = Vector3.zero;
     }
 
     /*private void OnDisable()
@@ -242,6 +252,9 @@ public class EnemyPatrol : MonoBehaviour
             return;
         }
         #endregion
+
+        fieldOfView.SetOrigin(enemy.position);
+        fieldOfView.SetAimDirection(initScale);
     }
 
     #region ENEMY CHASE METHODS
@@ -250,14 +263,14 @@ public class EnemyPatrol : MonoBehaviour
     {
         if (playerTransform == null) return false;
 
-        Vector2 directionToPlayer = (playerTransform.position - enemy.position).normalized;
+        Vector3 directionToPlayer = (playerTransform.position - enemy.position).normalized;
 
-        float distance = Vector2.Distance(enemy.position, playerTransform.position);
+        float distance = Vector3.Distance(enemy.position, playerTransform.position);
         if (distance > viewDistance)
             return false;
 
-        Vector2 facingDirection = enemy.localScale.x > 0 ? Vector2.right : Vector2.left;
-        float angle = Vector2.Angle(facingDirection, directionToPlayer);
+        Vector3 facingDirection = enemy.localScale.x > 0 ? Vector3.right : Vector3.left;
+        float angle = Vector3.Angle(facingDirection, directionToPlayer);
 
         return angle < viewAngle / 2f;
     }
