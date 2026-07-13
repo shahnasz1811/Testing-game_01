@@ -203,8 +203,8 @@ Transform:
   - {fileID: 5353460659431915725}
   - {fileID: 6675434410620234443}
   - {fileID: 3988624674168233011}
-  - {fileID: 1683191864713485563}
   - {fileID: 3939018943299854885}
+  - {fileID: 1683191864713485563}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2191005285428073324
@@ -229,7 +229,7 @@ MonoBehaviour:
   anim: {fileID: 5520174095685627736}
   viewDistance: 3.63
   viewAngle: 60.3
-  fieldOfView: {fileID: 0}
+  fieldOfView: {fileID: 8415781135239967751}
   isChasingPlayer: 0
   alertDuration: 0.5
   loseSightCooldown: 1.5

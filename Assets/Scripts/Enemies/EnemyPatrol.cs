@@ -92,6 +92,10 @@ public class EnemyPatrol : MonoBehaviour
 
     private void Update()
     {
+        Vector3 dir = enemy.localScale.x > 0 ? Vector3.right : Vector3.left;
+
+        fieldOfView.SetOrigin(enemy.position);
+        fieldOfView.SetAimDirection(dir);
         // 🔥 STEP 3: Re-assign player AFTER respawn
         if (playerTransform == null)
         {
@@ -253,8 +257,7 @@ public class EnemyPatrol : MonoBehaviour
         }
         #endregion
 
-        fieldOfView.SetOrigin(enemy.position);
-        fieldOfView.SetAimDirection(initScale);
+
     }
 
     #region ENEMY CHASE METHODS

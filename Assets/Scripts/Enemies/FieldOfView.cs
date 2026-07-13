@@ -17,12 +17,22 @@ public class FieldOfView : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         fov = 90f;
-        origin = Vector3.zero;
+    }
+
+    public void SetOrigin(Vector3 origin)
+    {
+        this.origin = origin;
+    }
+
+    public void SetAimDirection(Vector3 aimDirection)
+    {
+        startingAngle = UtilsClass.GetAngleFromVectorFloat(aimDirection) - fov / 2f;
     }
 
     // Update is called once per frame
     private void Update()
     {
+        origin = transform.position;
         int rayCount = 50;
         float angle = startingAngle;
         float angleIncrease = fov / rayCount;
@@ -71,15 +81,5 @@ public class FieldOfView : MonoBehaviour
         mesh.Clear();
         mesh.vertices = vertices;
         mesh.triangles = triangles;
-    }
-
-    public void SetOrigin(Vector3 origin)
-    {
-        this.origin = origin;
-    }
-
-    public void SetAimDirection(Vector3 aimDirection)
-    {
-        startingAngle = UtilsClass.GetAngleFromVectorFloat(aimDirection) - fov / 2f;
     }
 }
