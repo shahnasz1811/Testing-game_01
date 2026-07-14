@@ -56,12 +56,12 @@ Material:
     m_Ints: []
     m_Floats:
     - _DissolveAmount: 0
-    - _DissolveScale: 329
-    - _OutlineThickness: 0.152
+    - _DissolveScale: 354
+    - _OutlineThickness: 0.14
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
-    - _OutlineColor: {r: 3.018868, g: 0.12815943, b: 0.12815943, a: 1}
+    - _OutlineColor: {r: 2.6082385, g: 0.00000016582733, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

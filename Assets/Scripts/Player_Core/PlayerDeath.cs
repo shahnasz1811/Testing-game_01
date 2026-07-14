@@ -98,7 +98,7 @@ public class PlayerDeath : MonoBehaviour
         if (anim != null)
             anim.ResetTrigger("die");
 
-        anim.Play("Idle", 0, 0f);
+        anim.Play("Idle/Run", 0, 0f);
 
         isDead = false;
 

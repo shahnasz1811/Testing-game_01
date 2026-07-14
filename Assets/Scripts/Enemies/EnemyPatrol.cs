@@ -1,5 +1,3 @@
-using GLTFast.Schema;
-using NUnit.Framework.Internal;
 using UnityEngine;
 
 public class EnemyPatrol : MonoBehaviour
@@ -20,6 +18,7 @@ public class EnemyPatrol : MonoBehaviour
     private float currentSpeed;
     private Vector3 initScale;
     private bool movingLeft;
+    private bool defaultMovingLeft; // Caches the starting direction
 
     [Header("Idle Behaviour")]
     [SerializeField] private float idleDuration;
@@ -30,9 +29,7 @@ public class EnemyPatrol : MonoBehaviour
 
     // 👁️ VISION
     [Header("Vision Cone")]
-    public float viewDistance = 6f;
-    [Range(0, 180)] public float viewAngle = 60f;
-    [SerializeField] private FieldOfView fieldOfView;
+    [SerializeField] private DynamicVisionCone dynamicVisionCone;
 
     private Transform playerTransform;
     public bool isChasingPlayer;
@@ -53,10 +50,8 @@ public class EnemyPatrol : MonoBehaviour
     [SerializeField] private float wallCheckDistance = 0.2f;
     [SerializeField] private LayerMask wallLayer;
 
-
     private Rigidbody2D RB;
     private EnemyDeath enemyDeath;
-
     private bool waitingAtWall;
     #endregion
 
@@ -64,6 +59,9 @@ public class EnemyPatrol : MonoBehaviour
     {
         initScale = enemy.localScale;
         currentSpeed = patrolSpeed;
+
+        // Track your initial direction choice setup in inspector
+        defaultMovingLeft = movingLeft;
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
@@ -78,25 +76,10 @@ public class EnemyPatrol : MonoBehaviour
         }
     }
 
-    /*private void Start()
-    {
-        mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh;
-        origin = Vector3.zero;
-    }
-
-    /*private void OnDisable()
-    {
-        anim.SetBool("isMoving", false);
-    }*/
-
     private void Update()
     {
-        Vector3 dir = enemy.localScale.x > 0 ? Vector3.right : Vector3.left;
+        if (enemyDeath != null && enemyDeath.isDead) return;
 
-        fieldOfView.SetOrigin(enemy.position);
-        fieldOfView.SetAimDirection(dir);
-        // 🔥 STEP 3: Re-assign player AFTER respawn
         if (playerTransform == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -104,16 +87,20 @@ public class EnemyPatrol : MonoBehaviour
                 playerTransform = player.transform;
         }
 
-        if (enemyDeath != null && enemyDeath.isDead)
+        bool canSeePlayer = false;
+        if (dynamicVisionCone != null)
         {
-            anim.SetBool("isMoving", false);
-            return;
+            canSeePlayer = dynamicVisionCone.CheckPlayerDetection(playerTransform);
+        }
+
+        float alertRatio = alertDuration > 0 ? (alertTimer / alertDuration) : 0f;
+
+        if (dynamicVisionCone != null)
+        {
+            dynamicVisionCone.UpdateVisionCone(canSeePlayer, isChasingPlayer, alertRatio);
         }
 
         #region ENEMY CHASE LOGIC
-        bool canSeePlayer = CanSeePlayer();
-
-        // ⚠️ START ALERT
         if (canSeePlayer && !isChasingPlayer && !isAlerting)
         {
             isAlerting = true;
@@ -121,7 +108,6 @@ public class EnemyPatrol : MonoBehaviour
             loseSightTimer = loseSightCooldown;
         }
 
-        // ⚠️ HANDLE ALERT
         if (isAlerting)
         {
             anim.SetBool("isMoving", false);
@@ -131,30 +117,26 @@ public class EnemyPatrol : MonoBehaviour
 
             alertTimer += Time.deltaTime;
 
-            // 👁️ Maintain / reduce cooldown
             if (canSeePlayer)
                 loseSightTimer = loseSightCooldown;
             else
                 loseSightTimer -= Time.deltaTime;
 
-            // ✅ Commit to chase
             if (alertTimer >= alertDuration && canSeePlayer)
             {
                 isAlerting = false;
                 isChasingPlayer = true;
             }
 
-            // ❌ Give up
             if (loseSightTimer <= 0)
             {
                 isAlerting = false;
-                movingLeft = !movingLeft; // turn around
+                movingLeft = !movingLeft;
             }
 
             return;
         }
 
-        // 🏃 HANDLE CHASE
         if (isChasingPlayer && playerTransform != null)
         {
             if (canSeePlayer)
@@ -168,20 +150,17 @@ public class EnemyPatrol : MonoBehaviour
                 if (loseSightTimer <= 0)
                 {
                     isChasingPlayer = false;
-                    movingLeft = !movingLeft; // turn around
+                    movingLeft = !movingLeft;
                 }
             }
         }
 
-        // 🔥 SMOOTH SPEED
         float targetSpeed = isChasingPlayer ? chaseSpeed : patrolSpeed;
         currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * acceleration);
 
-        // 🏃 CHASE MOVEMENT
         if (isChasingPlayer)
         {
             anim.SetBool("isMoving", true);
-
             Vector3 direction;
 
             if (playerTransform != null && enemy.position.x > playerTransform.position.x)
@@ -208,10 +187,7 @@ public class EnemyPatrol : MonoBehaviour
         }
         #endregion
 
-
         #region ENEMY PATROL LOGIC
-        // 🧠 PATROL
-
         if (IsTouchingWall())
         {
             waitingAtWall = true;
@@ -248,7 +224,6 @@ public class EnemyPatrol : MonoBehaviour
         }
         #endregion
 
-
         #region GAME OVER CHECK
         if (LevelManager.instance.isGameOver)
         {
@@ -256,32 +231,11 @@ public class EnemyPatrol : MonoBehaviour
             return;
         }
         #endregion
-
-
-    }
-
-    #region ENEMY CHASE METHODS
-    // 👁️ VISION
-    private bool CanSeePlayer()
-    {
-        if (playerTransform == null) return false;
-
-        Vector3 directionToPlayer = (playerTransform.position - enemy.position).normalized;
-
-        float distance = Vector3.Distance(enemy.position, playerTransform.position);
-        if (distance > viewDistance)
-            return false;
-
-        Vector3 facingDirection = enemy.localScale.x > 0 ? Vector3.right : Vector3.left;
-        float angle = Vector3.Angle(facingDirection, directionToPlayer);
-
-        return angle < viewAngle / 2f;
     }
 
     private void ChangeDirection()
     {
         anim.SetBool("isMoving", false);
-
         idleTimer += Time.deltaTime;
 
         if (idleTimer > idleDuration)
@@ -290,7 +244,6 @@ public class EnemyPatrol : MonoBehaviour
             idleTimer = 0;
             waitingAtWall = false;
         }
-
     }
 
     private void MoveInDirection(int _direction)
@@ -298,66 +251,65 @@ public class EnemyPatrol : MonoBehaviour
         idleTimer = 0;
         anim.SetBool("isMoving", true);
 
-        enemy.localScale = new Vector3(Mathf.Abs(initScale.x) * _direction,
-        initScale.y, initScale.z);
-
+        enemy.localScale = new Vector3(Mathf.Abs(initScale.x) * _direction, initScale.y, initScale.z);
         Vector3 direction = _direction == -1 ? Vector3.left : Vector3.right;
-
         enemy.position += direction * currentSpeed * Time.deltaTime;
     }
-    #endregion
+
     private bool IsTouchingWall()
     {
         if (wallCheck == null) return false;
-
         Vector2 direction = movingLeft ? Vector2.left : Vector2.right;
 
-        return Physics2D.Raycast(
-            wallCheck.position,
-            direction,
-            wallCheckDistance,
-            wallLayer
-        );
+        return Physics2D.Raycast(wallCheck.position, direction, wallCheckDistance, wallLayer);
+    }
+
+    // Called instantly by EnemyDeath.Die() to prevent vision cone bugs
+    public void DisableAIOnDeath()
+    {
+        this.enabled = false;
+        if (dynamicVisionCone != null)
+        {
+            dynamicVisionCone.gameObject.SetActive(false);
+        }
     }
 
     public void ResetAI()
     {
+        this.enabled = true;
+
         isChasingPlayer = false;
         isAlerting = false;
+        waitingAtWall = false;
 
         alertTimer = 0f;
         loseSightTimer = 0f;
-
-        waitingAtWall = false;
+        idleTimer = 0f;
 
         currentSpeed = patrolSpeed;
+        movingLeft = defaultMovingLeft;
 
-        // Reset movement direction (optional)
-        movingLeft = false;
+        // Restore initial spatial scale context
+        enemy.localScale = initScale;
 
-        // Reset animation
+        if (RB != null)
+        {
+            RB.linearVelocity = Vector2.zero;
+        }
+
+        // Clean up the animator state completely
         if (anim != null)
+        {
             anim.SetBool("isMoving", false);
+            anim.SetBool("isSliding", false);
+            anim.ResetTrigger("alert"); // Flushes any cached triggers
+        }
 
-        // 🔥 VERY IMPORTANT: reset player reference
         playerTransform = null;
 
-        RB.linearVelocity = Vector2.zero;
+        if (dynamicVisionCone != null)
+        {
+            dynamicVisionCone.gameObject.SetActive(true);
+        }
     }
-
-    // 👁️ DEBUG
-    private void OnDrawGizmosSelected()
-    {
-        if (enemy == null) return;
-
-        Gizmos.color = Color.yellow;
-
-        Vector3 left = Quaternion.Euler(0, 0, viewAngle / 2) * Vector3.right;
-        Vector3 right = Quaternion.Euler(0, 0, -viewAngle / 2) * Vector3.right;
-
-        Gizmos.DrawRay(enemy.position, left * viewDistance);
-        Gizmos.DrawRay(enemy.position, right * viewDistance);
-    }
-
-
 }

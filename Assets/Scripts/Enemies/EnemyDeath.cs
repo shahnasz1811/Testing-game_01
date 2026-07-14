@@ -25,6 +25,9 @@ public class EnemyDeath : MonoBehaviour, IResettable
     private EnemyPatrol enemyPatrol;
     private bool hasCountedKill = false;
 
+    // Cache the shader property ID for efficiency and safety
+    private int dissolvePropertyID;
+
     private void Awake()
     {
         anim = GetComponent<Animator>();
@@ -32,8 +35,9 @@ public class EnemyDeath : MonoBehaviour, IResettable
         spriteColorFlasher = GetComponent<SpriteColorFlasher>();
         spriteRend = GetComponentInChildren<SpriteRenderer>();
         enemyPatrol = GetComponentInParent<EnemyPatrol>();
-        mat = Instantiate(spriteRend.material);
-        spriteRend.material = mat;
+
+        // Resolve the shader's property ID
+        dissolvePropertyID = Shader.PropertyToID("_DissolveAmount");
     }
 
     private void Start()
@@ -58,18 +62,6 @@ public class EnemyDeath : MonoBehaviour, IResettable
         }
     }
 
-   /*private void OnCollisionEnter2D(Collision2D collision)
-    {
-        //Falling boxes can crush enemy
-        if (collision.gameObject.CompareTag("Box"))
-        {
-            if (collision.relativeVelocity.magnitude > 7f)
-            {
-                Die();
-            }
-        }
-    }*/
-
     public void Die()
     {
         if (isDead) return;
@@ -83,30 +75,32 @@ public class EnemyDeath : MonoBehaviour, IResettable
         }
 
         Debug.Log("DIE called on: " + gameObject.name);
-        
-        GetComponentInParent<EnemyPatrol>().enabled = false; // stop patrol immediately
+
+        // Disable patrol immediately
+        if (enemyPatrol != null)
+        {
+            enemyPatrol.enabled = false;
+        }
 
         anim.SetBool("isMoving", false);
-        //anim.SetTrigger("die");
 
-        Debug.Log("Enemy died");
-
-        //spriteColorFlasher.FlashColor(spriteRend, 0.5f, Color.white);
-
-        //spriteRend.material = mat;
-        //mat.SetFloat("_DissolveAmount", 0f);
+        // Get the active material instance safely right when death starts
+        if (spriteRend != null)
+        {
+            mat = spriteRend.material; // accessing .material automatically instantiates a local copy in Unity
+            mat.SetFloat(dissolvePropertyID, 0f);
+        }
 
         Debug.Log("Dissolve started");
         StartCoroutine(DissolveAndDie());
-        //Invoke(nameof(HideEnemy), 1f); // match animation length
 
-        //mat.SetFloat("_DissolveAmount", 1f);
+        // Disable collisions so dead enemy doesn't block player
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
 
-        //GetComponent<Collider2D>().enabled = false;
         body.linearVelocity = Vector2.zero;
-        body.bodyType = RigidbodyType2D.Dynamic;
+        body.bodyType = RigidbodyType2D.Kinematic; // Keep it kinematic during dissolve so it doesn't fall through floor
 
-        //Debug.Log(string.Join(", ", LevelManager.instance.resettables));
         Debug.Log("Resettable count: " + LevelManager.instance.resettables.Count);
     }
 
@@ -117,39 +111,28 @@ public class EnemyDeath : MonoBehaviour, IResettable
         while (time < dissolveDuration)
         {
             time += Time.deltaTime;
+            dissolveAmount = Mathf.Clamp01(time / dissolveDuration);
 
-            dissolveAmount = time / dissolveDuration;
+            if (mat != null)
+            {
+                mat.SetFloat(dissolvePropertyID, dissolveAmount); // Update shader
+            }
 
-            mat.SetFloat("_DissolveAmount", dissolveAmount); // 🔥 shader control
-
-
-            Debug.Log("Running dissolve...");
-            Debug.Log("Dissolve: " + dissolveAmount);
-
+            Debug.Log($"Dissolving: {dissolveAmount}");
             yield return null;
         }
 
-        //mat.SetFloat("_DissolveAmount", 1f);
+        if (mat != null)
+        {
+            mat.SetFloat(dissolvePropertyID, 1f);
+        }
 
         HideEnemy();
     }
 
-    /*private void Respawn()
-    {
-        transform.position = respawnPoint.position;
-
-        body.bodyType = RigidbodyType2D.Dynamic;
-
-        GetComponent<MeleeEnemy>().enabled = true;
-
-        isDead = false;
-
-        Debug.Log("Enemy respawned");
-    }*/
-
     private void HideEnemy()
     {
-        gameObject.SetActive(false); // hide enemy immediately
+        gameObject.SetActive(false); // Hide the enemy now that the effect is done
     }
 
     public void ResetState()
@@ -159,32 +142,31 @@ public class EnemyDeath : MonoBehaviour, IResettable
             CancelInvoke();
 
             isDead = false;
-            hasCountedKill = false; // ✅ ADD THIS
+            hasCountedKill = false;
 
             transform.position = respawnPoint.position;
             body.bodyType = RigidbodyType2D.Dynamic;
+
+            // Re-enable collider
+            Collider2D col = GetComponent<Collider2D>();
+            if (col != null) col.enabled = true;
+
             gameObject.SetActive(true);
 
-            // 🔥 RESET DISSOLVE
-            mat.SetFloat("_DissolveAmount", 0f);
+            // Reset dynamic material state
+            if (spriteRend != null)
+            {
+                mat = spriteRend.material;
+                mat.SetFloat(dissolvePropertyID, 0f);
+            }
 
-            enemyPatrol.enabled = true;
-            enemyPatrol.ResetAI();
+            if (enemyPatrol != null)
+            {
+                enemyPatrol.enabled = true;
+                enemyPatrol.ResetAI();
+            }
 
             Debug.Log("Enemy reset");
         }
     }
-
-
-    /*public void ResetEnemy()
-    {
-        if (!isDead)
-        {
-            CancelInvoke(); // stops any pending respawn
-            isDead = false;
-            transform.position = respawnPoint.position;
-            body.bodyType = RigidbodyType2D.Dynamic;
-            gameObject.SetActive(true); // show enemy again
-        }
-    }*/
 }
