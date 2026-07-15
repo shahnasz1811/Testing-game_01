@@ -11,15 +11,13 @@ public class EnemyDeath : MonoBehaviour, IResettable
     public Transform respawnPoint;
 
     public bool isDead;
-
-    [Header("Flashing Settings")]
-    [SerializeField] private SpriteColorFlasher spriteColorFlasher;
-    private SpriteRenderer spriteRend;
+    private SpriteRenderer[] spriteRenders;
 
     [Header("Dissolve Settings")]
     [SerializeField] private float dissolveDuration = 1f;
 
-    private Material mat;
+    //  Specify UnityEngine.Material explicitly:
+    private List<UnityEngine.Material> materials = new List<UnityEngine.Material>();
     private float dissolveAmount = 0f;
 
     private EnemyPatrol enemyPatrol;
@@ -32,8 +30,7 @@ public class EnemyDeath : MonoBehaviour, IResettable
     {
         anim = GetComponent<Animator>();
         body = GetComponent<Rigidbody2D>();
-        spriteColorFlasher = GetComponent<SpriteColorFlasher>();
-        spriteRend = GetComponentInChildren<SpriteRenderer>();
+        spriteRenders = GetComponentsInChildren<SpriteRenderer>();
         enemyPatrol = GetComponentInParent<EnemyPatrol>();
 
         // Resolve the shader's property ID
@@ -43,15 +40,6 @@ public class EnemyDeath : MonoBehaviour, IResettable
     private void Start()
     {
         LevelManager.instance.RegisterResettable(this);
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            Color c = Color.red;
-            spriteRend.color = c;
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -84,12 +72,18 @@ public class EnemyDeath : MonoBehaviour, IResettable
 
         anim.SetBool("isMoving", false);
 
-        // Get the active material instance safely right when death starts
-        if (spriteRend != null)
+        materials.Clear();
+        foreach (SpriteRenderer ren in spriteRenders)
         {
-            mat = spriteRend.material; // accessing .material automatically instantiates a local copy in Unity
-            mat.SetFloat(dissolvePropertyID, 0f);
+            if (ren != null)
+            {
+                Material dynamicMat = ren.material; // Automatically instantiates a local copy
+                dynamicMat.SetFloat(dissolvePropertyID, 0f);
+                materials.Add(dynamicMat);
+            }
         }
+
+        enemyPatrol.DisableAIOnDeath();
 
         Debug.Log("Dissolve started");
         StartCoroutine(DissolveAndDie());
@@ -113,18 +107,25 @@ public class EnemyDeath : MonoBehaviour, IResettable
             time += Time.deltaTime;
             dissolveAmount = Mathf.Clamp01(time / dissolveDuration);
 
-            if (mat != null)
+            // 5. Loop through and dissolve every single sprite part together
+            foreach (Material mat in materials)
             {
-                mat.SetFloat(dissolvePropertyID, dissolveAmount); // Update shader
+                if (mat != null)
+                {
+                    mat.SetFloat(dissolvePropertyID, dissolveAmount);
+                }
             }
 
             Debug.Log($"Dissolving: {dissolveAmount}");
             yield return null;
         }
 
-        if (mat != null)
+        foreach (UnityEngine.Material mat in materials)
         {
-            mat.SetFloat(dissolvePropertyID, 1f);
+            if (mat != null)
+            {
+                mat.SetFloat(dissolvePropertyID, 1f);
+            }
         }
 
         HideEnemy();
@@ -151,20 +152,25 @@ public class EnemyDeath : MonoBehaviour, IResettable
             Collider2D col = GetComponent<Collider2D>();
             if (col != null) col.enabled = true;
 
-            gameObject.SetActive(true);
-
-            // Reset dynamic material state
-            if (spriteRend != null)
+            // 6. Reset all dynamic materials back to normal upon respawning
+            foreach (SpriteRenderer ren in spriteRenders)
             {
-                mat = spriteRend.material;
-                mat.SetFloat(dissolvePropertyID, 0f);
+                if (ren != null)
+                {
+                    ren.material.SetFloat(dissolvePropertyID, 0f);
+                }
             }
 
+            // Reset the AI (position, facing/scale, animator state) BEFORE
+            // the object becomes visible again, so it never shows for a
+            // frame in its old, pre-death orientation/pose.
             if (enemyPatrol != null)
             {
                 enemyPatrol.enabled = true;
                 enemyPatrol.ResetAI();
             }
+
+            gameObject.SetActive(true);
 
             Debug.Log("Enemy reset");
         }

@@ -17,7 +17,7 @@ public class EnemyPatrol : MonoBehaviour
 
     private float currentSpeed;
     private Vector3 initScale;
-    private bool movingLeft;
+    [SerializeField] private bool movingLeft;
     private bool defaultMovingLeft; // Caches the starting direction
 
     [Header("Idle Behaviour")]
@@ -33,6 +33,12 @@ public class EnemyPatrol : MonoBehaviour
 
     private Transform playerTransform;
     public bool isChasingPlayer;
+
+    // Set by MeleeEnemy instead of toggling `enabled` directly (see Update()).
+    // Keeping this component enabled at all times means it can always react
+    // instantly to ResetAI() on respawn, and it stays in charge of its own
+    // animator state (no other script writes to "isMoving").
+    public bool isInMeleeRange;
 
     // ⚠️ ALERT SYSTEM
     [Header("Alert System")]
@@ -79,6 +85,20 @@ public class EnemyPatrol : MonoBehaviour
     private void Update()
     {
         if (enemyDeath != null && enemyDeath.isDead) return;
+
+        // While MeleeEnemy has the player in melee range, just idle here.
+        // We do NOT disable this component for that (MeleeEnemy used to do
+        // `enemyPatrol.enabled = false`), because that could freeze this
+        // script mid-update right after a respawn re-enabled/reset it - the
+        // walk animation would keep looping (nothing else clears
+        // "isMoving") while the transform stopped moving, and wall
+        // detection (below) would stop running too. Idling in-place here
+        // keeps animation state correct and keeps this Update loop alive.
+        if (isInMeleeRange)
+        {
+            anim.SetBool("isMoving", false);
+            return;
+        }
 
         if (playerTransform == null)
         {
@@ -281,6 +301,7 @@ public class EnemyPatrol : MonoBehaviour
         isChasingPlayer = false;
         isAlerting = false;
         waitingAtWall = false;
+        isInMeleeRange = false;
 
         alertTimer = 0f;
         loseSightTimer = 0f;

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1953671156769457058}
   - component: {fileID: 3414548615013838468}
   - component: {fileID: 3458290654784774601}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Spikes
   m_TagString: Hazard
   m_Icon: {fileID: 0}
