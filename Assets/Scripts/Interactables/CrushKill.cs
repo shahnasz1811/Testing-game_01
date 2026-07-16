@@ -19,7 +19,7 @@ public class CrushKill : MonoBehaviour, IResettable
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
         audioSource = GetComponentInChildren<AudioSource>();
-        
+
     }
 
     private void Start()
@@ -36,7 +36,20 @@ public class CrushKill : MonoBehaviour, IResettable
 
         if (impact > minImpactForce)
         {
-            collision.gameObject.GetComponent<EnemyDeath>()?.Die();
+            // Anything with custom death/defeat logic (e.g. BossController)
+            // implements ICrushable. GetComponentInParent so the crush
+            // collider can live on a child hitbox while the actual
+            // controller sits on the root object.
+            ICrushable crushable = collision.gameObject.GetComponentInParent<ICrushable>();
+            if (crushable != null)
+            {
+                crushable.OnCrushed(impact);
+            }
+            else
+            {
+                // Fallback: regular patrol enemies use EnemyDeath, unchanged.
+                collision.gameObject.GetComponent<EnemyDeath>()?.Die();
+            }
         }
     }
 
@@ -44,7 +57,7 @@ public class CrushKill : MonoBehaviour, IResettable
     {
         if (collision.CompareTag("Hazard"))
         {
-            StartCoroutine(Break()); 
+            StartCoroutine(Break());
         }
     }
 

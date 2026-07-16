@@ -1,11 +1,16 @@
 using UnityEngine;
 
-public class RopeTrigger : MonoBehaviour
+public class RopeTrigger : MonoBehaviour, IResettable
 {
     [SerializeField] private HangingObject hangingObject;
 
     private Collider2D Collider2D => GetComponent<Collider2D>();
     private bool playerInRange;
+
+    private void Start()
+    {
+        LevelManager.instance.RegisterResettable(this);
+    }
 
     private void Update()
     {
@@ -26,5 +31,11 @@ public class RopeTrigger : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
             playerInRange = false;
+    }
+
+    public void ResetState()
+    {
+        Collider2D.enabled = true;
+        playerInRange = false;
     }
 }
