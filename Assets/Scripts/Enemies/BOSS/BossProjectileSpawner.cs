@@ -24,6 +24,10 @@ public class BossProjectileSpawner : MonoBehaviour
     [SerializeField] private float telegraphDuration = 0.35f;
     [SerializeField] private float timeBetweenPatterns = 1.1f;
 
+    [Header("Activation Height")]
+    [Tooltip("She won't telegraph or fire until the PLAYER's Y position is at or above this. Useful for arenas where she should just sit there quietly until the player climbs past a certain point. Set to a very negative number (e.g. -1000) to attack immediately regardless of height.")]
+    [SerializeField] private float minPlayerHeightToAttack = -1000f;
+
     [Header("Telegraph Flash (optional)")]
     [Tooltip("The beak/head sprite to flash right before firing, so the player gets a warning. Leave empty to skip.")]
     [SerializeField] private SpriteRenderer telegraphSprite;
@@ -111,6 +115,24 @@ public class BossProjectileSpawner : MonoBehaviour
     {
         while (true)
         {
+            // Don't keep shooting at the player while they're dead/mid-respawn -
+            // BossController.FixedUpdate() already skips tracking during this
+            // window, this loop just never mirrored that check.
+            if (LevelManager.instance != null && LevelManager.instance.isGameOver)
+            {
+                yield return null;
+                continue;
+            }
+
+            // Stay quiet below the activation line - re-checked every frame so
+            // she starts attacking the instant the player crosses it, without
+            // needing to wait out a full pattern cycle first.
+            if (player != null && player.position.y < minPlayerHeightToAttack)
+            {
+                yield return null;
+                continue;
+            }
+
             yield return Telegraph();
 
             // Cycle through the three patterns at random so the fight doesn't

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using Unity.Cinemachine;
 
 // Requirement #1. Place this on a tall, thin trigger zone at the entrance to
 // the boss arena (a wall the player has to walk into to proceed right).
@@ -12,8 +13,10 @@ public class BossIntroCutscene : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private BossController boss;
-    [Tooltip("Your existing Player_Core/CameraFollow.cs component. Leave empty if you're driving the camera with the Cinemachine vcam instead - see the README for that hookup.")]
+    [Tooltip("Your existing Player_Core/CameraFollow.cs component. Leave empty if you're driving the camera with the Cinemachine vcam instead (use Intro Camera below).")]
     [SerializeField] private CameraFollow cameraFollow;
+    [Tooltip("Your CinemachineCamera (Cinemachine 3.x) that normally tracks the player. Leave empty if you're driving the camera with CameraFollow instead. Only fill in ONE of CameraFollow / Intro Camera.")]
+    [SerializeField] private CinemachineCamera introCamera;
     [Tooltip("An empty Transform used as the camera's temporary focus point during the cutscene. Position doesn't matter, it gets moved every frame.")]
     [SerializeField] private Transform cutsceneFocusPoint;
 
@@ -28,6 +31,12 @@ public class BossIntroCutscene : MonoBehaviour
     [SerializeField] private float panBackTime = 0.8f;
 
     private bool hasTriggered;
+    private Collider2D col;
+
+    private void Awake()
+    {
+        col = GetComponent<Collider2D>();
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -55,14 +64,29 @@ public class BossIntroCutscene : MonoBehaviour
         if (movement != null) movement.enabled = false;
         if (playerRb != null) playerRb.linearVelocity = Vector2.zero;
 
-        bool drivingCamera = cameraFollow != null && cutsceneFocusPoint != null;
-        Transform originalCameraTarget = null;
+        bool drivingCamera = cutsceneFocusPoint != null && (cameraFollow != null || introCamera != null);
+        Transform originalCameraFollowTarget = null;
+        Transform originalCinemachineTarget = null;
 
         if (drivingCamera)
         {
-            originalCameraTarget = cameraFollow.player;
             cutsceneFocusPoint.position = player.position;
-            cameraFollow.player = cutsceneFocusPoint;
+
+            if (cameraFollow != null)
+            {
+                originalCameraFollowTarget = cameraFollow.player;
+                cameraFollow.player = cutsceneFocusPoint;
+            }
+
+            if (introCamera != null)
+            {
+                // CameraTarget is a struct, so it has to be copied out, edited,
+                // and reassigned - you can't write introCamera.Target.TrackingTarget directly.
+                originalCinemachineTarget = introCamera.Target.TrackingTarget;
+                CameraTarget camTarget = introCamera.Target;
+                camTarget.TrackingTarget = cutsceneFocusPoint;
+                introCamera.Target = camTarget;
+            }
 
             Vector3 startPos = player.position;
             Vector3 bossRevealPos = boss.transform.position; // still at hiddenPoint at this stage
@@ -92,7 +116,15 @@ public class BossIntroCutscene : MonoBehaviour
                 yield return null;
             }
 
-            cameraFollow.player = originalCameraTarget;
+            if (cameraFollow != null)
+                cameraFollow.player = originalCameraFollowTarget;
+
+            if (introCamera != null)
+            {
+                CameraTarget camTarget = introCamera.Target;
+                camTarget.TrackingTarget = originalCinemachineTarget;
+                introCamera.Target = camTarget;
+            }
         }
         else
         {
@@ -100,6 +132,7 @@ public class BossIntroCutscene : MonoBehaviour
         }
 
         if (movement != null) movement.enabled = true;
+        col.enabled = false; // prevent re-triggering if the player backtracks
 
         boss.BeginCombat();
     }

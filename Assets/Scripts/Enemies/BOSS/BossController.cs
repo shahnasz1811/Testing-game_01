@@ -244,6 +244,14 @@ public class BossController : MonoBehaviour, ICrushable, IResettable
     // fight does, rather than replaying the whole intro on every death.
     public void ResetState()
     {
+        // Without this guard, a boss that has already been defeated gets
+        // dragged back into BossState.Tracking (and starts firing again)
+        // the next time ANYTHING kills the player, anywhere in the level -
+        // hasEngaged is never cleared, so ResetAll()'s call here used to
+        // fall straight through to the "resume the fight" branch below
+        // even though the fight was long over.
+        if (state == BossState.Defeated) return;
+
         StopAllCoroutines();
 
         hitsTaken = 0;

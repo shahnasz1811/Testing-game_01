@@ -39,6 +39,14 @@ public class BossProjectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // Ignore anything that's ALSO just a trigger. Logic-only zones in this
+        // project - the boss intro cutscene wall, rope-interaction zones,
+        // checkpoints, etc. - are always set up as "Is Trigger" colliders with
+        // no real geometry behind them, so a shot flying through one isn't
+        // actually hitting anything. Ground/walls and the player use solid
+        // (non-trigger) colliders, so they still stop the shot below.
+        if (collision.isTrigger) return;
+
         // Ignore the boss's own hurtbox/crush-point so it can't insta-despawn
         // its own bullets the moment they spawn at the beak.
         if (collision.CompareTag("Enemy")) return;
