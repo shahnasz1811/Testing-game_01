@@ -171,9 +171,9 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 320
-  normalColor: {r: 1, g: 1, b: 1, a: 0.19215687}
-  alertColor: {r: 1, g: 0.5, b: 0, a: 0.28235295}
-  chaseColor: {r: 1, g: 0, b: 0, a: 0.29803923}
+  normalColor: {r: 1, g: 1, b: 1, a: 0.03529412}
+  alertColor: {r: 1, g: 0.5, b: 0, a: 0.25490198}
+  chaseColor: {r: 1, g: 0, b: 0, a: 0.41960785}
 --- !u!1 &3635607928187826114
 GameObject:
   m_ObjectHideFlags: 0
@@ -408,7 +408,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701074354486, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_SortingLayer
-      value: 2
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701074354486, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_SortingLayerID
@@ -424,7 +424,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701487851566, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_SortingLayer
-      value: 2
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701487851566, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_SortingLayerID
@@ -512,7 +512,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701876574791, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_SortingLayer
-      value: 2
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701876574791, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_SortingLayerID
@@ -662,7 +662,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDeath
   respawnPoint: {fileID: 3988624674168233011}
   isDead: 0
-  spriteColorFlasher: {fileID: 0}
   dissolveDuration: 1
 --- !u!4 &1683191864713485563 stripped
 Transform:

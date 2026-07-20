@@ -19,6 +19,8 @@ public class LevelManager : MonoBehaviour
     private Coroutine victoryCoroutine;
     private bool levelCompleted = false;
 
+    private Door exitDoor;
+
     private void Awake()
     {
         if (instance == null)
@@ -41,7 +43,7 @@ public class LevelManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.V))
         {
-            StartCoroutine(CheckVictoryAfterDelay());
+            StartCoroutine(OpenExitDoorAfterDelay());
             //LeaderboardManager.instance.ClearLeaderboard();
         }
     }
@@ -49,6 +51,13 @@ public class LevelManager : MonoBehaviour
     {
         if (!resettables.Contains(obj))
             resettables.Add(obj);
+    }
+
+    // The Door registers itself here when it spawns, so the level doesn't need
+    // any manual Inspector wiring - just drop the Door prefab into the scene.
+    public void RegisterExitDoor(Door door)
+    {
+        exitDoor = door;
     }
 
     public void EnemyDied()
@@ -61,7 +70,7 @@ public class LevelManager : MonoBehaviour
         if (deadEnemies >= totalEnemies)
         {
             if (victoryCoroutine == null)
-                victoryCoroutine = StartCoroutine(CheckVictoryAfterDelay());
+                victoryCoroutine = StartCoroutine(OpenExitDoorAfterDelay());
         }
     }
 
@@ -71,7 +80,7 @@ public class LevelManager : MonoBehaviour
 
         isGameOver = true;
 
-       //🔥 HARD CANCEL victory
+        //🔥 HARD CANCEL victory
         if (victoryCoroutine != null)
         {
             StopCoroutine(victoryCoroutine);
@@ -82,12 +91,45 @@ public class LevelManager : MonoBehaviour
         Debug.Log("GAME OVER");
     }
 
-    IEnumerator CheckVictoryAfterDelay()
+    // All enemies are dead - wait a beat, then open the exit door instead of
+    // showing the victory screen right away. The victory screen now only
+    // appears once the player actually walks through the open door.
+    IEnumerator OpenExitDoorAfterDelay()
     {
         levelCompleted = true;
 
         yield return new WaitForSeconds(victoryCheckDelay);
 
+        if (isGameOver)
+        {
+            levelCompleted = false;
+            victoryCoroutine = null;
+            yield break;
+        }
+
+        if (exitDoor != null)
+        {
+            exitDoor.Open();
+        }
+        else
+        {
+            Debug.LogWarning("LevelManager: no exit Door found in this scene - showing the victory screen immediately instead.");
+            yield return StartCoroutine(ShowVictoryRoutine());
+        }
+
+        victoryCoroutine = null;
+    }
+
+    // Called by the Door once the player walks through it while it's open.
+    public void OnPlayerReachedExit()
+    {
+        if (isGameOver) return;
+
+        StartCoroutine(ShowVictoryRoutine());
+    }
+
+    private IEnumerator ShowVictoryRoutine()
+    {
         SaveManager.UnlockNextLevel(levelData.levelNumber);
 
         LevelStats.instance.StopTimer();
@@ -115,8 +157,6 @@ public class LevelManager : MonoBehaviour
         {
             victoryScreen.Show(levelData, true, deadEnemies, totalEnemies);
         }
-
-        victoryCoroutine = null;
     }
 
     public void ResetGameState()
