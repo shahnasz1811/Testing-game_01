@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4928443004398900853}
-  - component: {fileID: 8276699985716934912}
+  - component: {fileID: 926099333214987713}
   - component: {fileID: 8029604571437434486}
   - component: {fileID: 3484746685118008023}
   - component: {fileID: 3624770087630972729}
@@ -38,7 +38,7 @@ Transform:
   - {fileID: 4459552854695993885}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &8276699985716934912
+--- !u!212 &926099333214987713
 SpriteRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
@@ -64,7 +64,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3b5cc91c3bf8cf74391252247f52fb59, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -83,16 +83,16 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 530684743
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: ca428a859ec638a4890d444e8883f2dc, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 4722288128823036316, guid: 9c53f341a679da844904ee0e4bc6e55f, type: 3}
+  m_Color: {r: 0.5566038, g: 0.43691236, b: 0.35969207, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 5.12, y: 5.12}
+  m_Size: {x: 5.07, y: 5.04}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -162,8 +162,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5.12, y: 5.12}
-    newSize: {x: 5.12, y: 5.12}
+    oldSize: {x: 7.311111, y: 7.045199}
+    newSize: {x: 5.07, y: 5.04}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -182,8 +182,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc72df3a5fc72eb4cb1c6cab4125704e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Box
-  solidCollider: {fileID: 0}
-  throwForce: 6
 --- !u!114 &5462861726883015440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -581,8 +579,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.5
-      minScalar: 0.3
+      scalar: 0.7
+      minScalar: 0.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1034,7 +1032,7 @@ ParticleSystem:
     m_UseMeshMaterialIndex: 0
     m_UseMeshColors: 1
     alignToDirection: 0
-    m_Texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
+    m_Texture: {fileID: 2800000, guid: a1d0f0ded74272b41b1e4f50416d72a9, type: 3}
     m_TextureClipChannel: 3
     m_TextureClipThreshold: 0
     m_TextureUVChannel: 0
@@ -5134,7 +5132,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3b5cc91c3bf8cf74391252247f52fb59, type: 2}
+  - {fileID: 2100000, guid: 9bf035bb38f2ec5498cc72b2131730a7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

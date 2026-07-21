@@ -241,7 +241,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701735993215, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_Name
-      value: Character (31) Variant 1
+      value: REAL
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701735993215, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_Layer
@@ -254,6 +254,26 @@ PrefabInstance:
     - target: {fileID: 1789626701735993215, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_TagString
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 1789626701876574788, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: -0.56796795
+      objectReference: {fileID: 0}
+    - target: {fileID: 1789626701876574788, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.56796795
+      objectReference: {fileID: 0}
+    - target: {fileID: 1789626701876574788, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.56796795
+      objectReference: {fileID: 0}
+    - target: {fileID: 1789626701876574788, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.061
+      objectReference: {fileID: 0}
+    - target: {fileID: 1789626701876574788, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.414
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701876574790, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_Layer
@@ -336,7 +356,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.042678833, y: 0.16903281}
+  m_Offset: {x: 0.09367591, y: 0.18815672}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.49671713, y: 0.14719671}
@@ -346,7 +366,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.8036165, y: 1.3502202}
+  m_Size: {x: 0.9226099, y: 1.1504815}
   m_EdgeRadius: 0
 --- !u!50 &4285733746793781940
 Rigidbody2D:
@@ -393,10 +413,12 @@ MonoBehaviour:
   patrolSpeed: 2
   chaseSpeed: 5
   acceleration: 3
+  movingLeft: 0
   idleDuration: 1
   anim: {fileID: 4963489918779381409}
   dynamicVisionCone: {fileID: 1844800496392803580}
   isChasingPlayer: 0
+  isInMeleeRange: 0
   alertDuration: 1
   loseSightCooldown: 1.5
   wallCheck: {fileID: 4574450329629371956}
@@ -419,7 +441,7 @@ MonoBehaviour:
   attackCooldown: 1
   range: 0.94
   damage: 1
-  colliderDistance: 0.87
+  colliderDistance: 1.01
   boxCollider: {fileID: 7856750962000210297}
   height: 0.62
   verticalOffset: 0
@@ -440,7 +462,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDeath
   respawnPoint: {fileID: 0}
   isDead: 0
-  spriteColorFlasher: {fileID: 0}
   dissolveDuration: 1
 --- !u!4 &2243255277059532034 stripped
 Transform:

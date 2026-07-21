@@ -1071,7 +1071,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 160755945869457892, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 714971002788222270, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1167,11 +1167,11 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 7021f475457ba0e499fbe97a09496fae, type: 2}
     - target: {fileID: 6092215319506421003, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: m_SortingLayer
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6092215319506421003, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: m_SortingLayerID
-      value: -822680059
+      value: 530684743
       objectReference: {fileID: 0}
     - target: {fileID: 6517751955691789503, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: orthographic size
@@ -1235,7 +1235,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8207359687063431620, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8763631262942032629, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: fov
@@ -1514,7 +1514,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1995275399
-  m_SortingLayer: -2
+  m_SortingLayer: -3
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 6348627235015171253, guid: 5f76d76d44a748c4092fd885cb7ee404, type: 3}
