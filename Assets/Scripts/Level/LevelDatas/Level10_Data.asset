@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bf45ac1283354a4db7d88b5d4ae6cc0, type: 3}
   m_Name: Level10_Data
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
-  levelNumber: 0
+  levelNumber: 10
   isFinalLevel: 0
-  targetTime: 60
+  targetTime: 120
   requireAllEnemiesKilled: 1
-  maxDeathsForStar: 0
-  totalEnemies: 0
+  maxDeathsForStar: 3
+  totalEnemies: 1

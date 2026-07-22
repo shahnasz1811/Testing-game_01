@@ -56,8 +56,8 @@ Material:
     m_Ints: []
     m_Floats:
     - _DissolveAmount: 0
-    - _DissolveScale: 354
-    - _OutlineThickness: 0.14
+    - _DissolveScale: 44
+    - _OutlineThickness: 0.089
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
