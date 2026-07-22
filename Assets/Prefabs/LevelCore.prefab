@@ -426,6 +426,7 @@ GameObject:
   - component: {fileID: 6759186137701539392}
   - component: {fileID: 4855803288671519658}
   - component: {fileID: 6019592062547483549}
+  - component: {fileID: 346221654268264822}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -442,7 +443,7 @@ Transform:
   m_GameObject: {fileID: 6026174773529326204}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.93151283, y: 1.1258981, z: -10}
+  m_LocalPosition: {x: -0.9315203, y: 1.1258972, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -584,6 +585,18 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &346221654268264822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6026174773529326204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcf1013accff60e4da37a8d9ccbff6eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ParallaxCamera
 --- !u!1 &6059202607830776980
 GameObject:
   m_ObjectHideFlags: 0
@@ -1597,15 +1610,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7089190377241231297, guid: a70ef1670be203741832400126af2891, type: 3}
       propertyPath: m_Color.b
-      value: 0.3137255
+      value: 0.5254539
       objectReference: {fileID: 0}
     - target: {fileID: 7089190377241231297, guid: a70ef1670be203741832400126af2891, type: 3}
       propertyPath: m_Color.g
-      value: 0.627451
+      value: 0.6685905
       objectReference: {fileID: 0}
     - target: {fileID: 7089190377241231297, guid: a70ef1670be203741832400126af2891, type: 3}
       propertyPath: m_Color.r
-      value: 0.9137255
+      value: 0.9056604
       objectReference: {fileID: 0}
     - target: {fileID: 7089190377241231297, guid: a70ef1670be203741832400126af2891, type: 3}
       propertyPath: m_SortingOrder
@@ -1621,15 +1634,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7940953352348481613, guid: a70ef1670be203741832400126af2891, type: 3}
       propertyPath: m_Color.b
-      value: 0.23602703
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7940953352348481613, guid: a70ef1670be203741832400126af2891, type: 3}
       propertyPath: m_Color.g
-      value: 0.72717685
+      value: 0.3764706
       objectReference: {fileID: 0}
     - target: {fileID: 7940953352348481613, guid: a70ef1670be203741832400126af2891, type: 3}
       propertyPath: m_Color.r
-      value: 0.9811321
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7940953352348481613, guid: a70ef1670be203741832400126af2891, type: 3}
       propertyPath: m_Intensity
@@ -1759,7 +1772,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4607742348310617510, guid: ae7cffeef47b27945a553e35a2cf4aaf, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

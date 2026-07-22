@@ -11603,7 +11603,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a87ba58d372399e4fb026821fb051a1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ParallaxBackground
-  parallaxCamera: {fileID: 1880147430}
+  parallaxCamera: {fileID: 1880147426}
 --- !u!4 &1171043439 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3058992770546744483, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
@@ -11660,7 +11660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a87ba58d372399e4fb026821fb051a1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ParallaxBackground
-  parallaxCamera: {fileID: 1880147430}
+  parallaxCamera: {fileID: 1880147426}
 --- !u!1 &1222098229
 GameObject:
   m_ObjectHideFlags: 0
@@ -12620,9 +12620,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3174189281896186978, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1171043438}
-    - targetCorrespondingSourceObject: {fileID: 6026174773529326204, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1880147430}
     - targetCorrespondingSourceObject: {fileID: 1684481711870858123, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1366489449}
@@ -12635,18 +12632,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4070618372323549022, guid: d07690e1a3decf94f8f51f84ec70bfde, type: 3}
   m_PrefabInstance: {fileID: 6264685914184176834}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1880147424 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6026174773529326204, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
+--- !u!114 &1880147426 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 346221654268264822, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
   m_PrefabInstance: {fileID: 1629766931}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1880147430
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1880147424}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fcf1013accff60e4da37a8d9ccbff6eb, type: 3}

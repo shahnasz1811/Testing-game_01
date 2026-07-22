@@ -15,17 +15,32 @@ EditorBuildSettings:
     path: Assets/Levels/Level_01.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Levels/Level_04.unity
-    guid: b5d4c26105780844180ce7c8c7182286
+    path: Assets/Levels/Level_02.unity
+    guid: 4ad4b0dd2582249478ece6fb0a9c871a
   - enabled: 1
     path: Assets/Levels/Level_03.unity
     guid: a7bf482ba116f624fa02837f38fca7cb
   - enabled: 1
+    path: Assets/Levels/Level_04.unity
+    guid: b5d4c26105780844180ce7c8c7182286
+  - enabled: 1
     path: Assets/Levels/Level_05.unity
-    guid: 242626ccdd0f59f489a7170decfdf40c
+    guid: 6bec7a8845438db40bc5d4c85ed04e6d
+  - enabled: 1
+    path: Assets/Levels/Level_06.unity
+    guid: a185351ea16935f46bc55e1f3411c82b
+  - enabled: 1
+    path: Assets/Levels/Level_07.unity
+    guid: ac88c439561498f4280c40ef463c7edd
+  - enabled: 1
+    path: Assets/Levels/Level_08.unity
+    guid: 356d2535659109b4dba212e023ff4043
+  - enabled: 1
+    path: Assets/Levels/Level_09.unity
+    guid: 8dfdd785e0756844f93367f02556aa4c
   - enabled: 1
     path: Assets/Levels/Level_10.unity
-    guid: 6bec7a8845438db40bc5d4c85ed04e6d
+    guid: 16be611e678c3a34cb4ed92a2a4b2e30
   - enabled: 1
     path: Assets/Levels/Leaderboard.unity
     guid: 101326ec41cf8a14da7eb2d50726e5c1
