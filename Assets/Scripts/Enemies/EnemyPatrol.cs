@@ -86,6 +86,21 @@ public class EnemyPatrol : MonoBehaviour
     {
         if (enemyDeath != null && enemyDeath.isDead) return;
 
+        // Freeze immediately once the player is dead. This used to sit at
+        // the bottom of Update(), but the isAlerting and isChasingPlayer
+        // branches below both `return` before ever reaching it - so a
+        // chasing enemy would keep walking straight at the player's frozen
+        // death position for the whole death/respawn delay. Checking this
+        // first makes it apply no matter what state the enemy is in.
+        if (LevelManager.instance.isGameOver)
+        {
+            if (RB != null)
+                RB.linearVelocity = Vector2.zero;
+
+            anim.SetBool("isMoving", false);
+            return;
+        }
+
         // While MeleeEnemy has the player in melee range, just idle here.
         // We do NOT disable this component for that (MeleeEnemy used to do
         // `enemyPatrol.enabled = false`), because that could freeze this
@@ -111,6 +126,17 @@ public class EnemyPatrol : MonoBehaviour
         if (dynamicVisionCone != null)
         {
             canSeePlayer = dynamicVisionCone.CheckPlayerDetection(playerTransform);
+        }
+
+        // alertTimer used to only ever count up (see the isAlerting block
+        // below) and simply froze once chasing began - so alertRatio stayed
+        // maxed out forever, and the cone would get stuck on alertColor
+        // instead of fading back to normalColor after losing the player.
+        // Counting it back down whenever we're not actively building alert
+        // lets the same Lerp below fade it back out gradually instead.
+        if (!isAlerting)
+        {
+            alertTimer = Mathf.Max(0f, alertTimer - Time.deltaTime);
         }
 
         float alertRatio = alertDuration > 0 ? (alertTimer / alertDuration) : 0f;
@@ -241,14 +267,6 @@ public class EnemyPatrol : MonoBehaviour
                 MoveInDirection(1);
             else
                 ChangeDirection();
-        }
-        #endregion
-
-        #region GAME OVER CHECK
-        if (LevelManager.instance.isGameOver)
-        {
-            RB.linearVelocity = Vector2.zero;
-            return;
         }
         #endregion
     }

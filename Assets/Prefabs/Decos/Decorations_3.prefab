@@ -84,7 +84,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: -6378001285771275336, guid: de7e06e17f727e94fb12cae91fd8b273, type: 3}
-  m_Color: {r: 0.5, g: 0.34359485, b: 0.2240566, a: 0.3764706}
+  m_Color: {r: 0.6226415, g: 0.42573917, b: 0.2731399, a: 0.3764706}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -108,12 +108,12 @@ MonoBehaviour:
   m_ComponentVersion: 2
   m_LightType: 3
   m_BlendStyleIndex: 0
-  m_FalloffIntensity: 0.317
-  m_Color: {r: 1, g: 0.3764706, b: 0, a: 1}
+  m_FalloffIntensity: 0.467
+  m_Color: {r: 0.6792453, g: 0.30958095, b: 0.086507656, a: 1}
   m_Intensity: 4.43
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 877ced7605e6f6ce912b416c00000000479ba11f
+  m_ApplyToSortingLayers: 877ced7605e6f6ce
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -134,7 +134,7 @@ MonoBehaviour:
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 0
-  m_PointLightOuterRadius: 2.54
+  m_PointLightOuterRadius: 0.91
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
   m_ShapeLightParametricRadius: 1
@@ -159,6 +159,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FireLight2D
   minIntensity: 3.2
   maxIntensity: 4
-  minOuterRadius: 1.5
-  maxOuterRadius: 2.7
+  minOuterRadius: 0.91
+  maxOuterRadius: 1.2
   flickerSpeed: 2

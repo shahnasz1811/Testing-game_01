@@ -22,6 +22,7 @@ public class EnemyDeath : MonoBehaviour, IResettable
 
     private EnemyPatrol enemyPatrol;
     private bool hasCountedKill = false;
+    private Coroutine dissolveRoutine;
 
     // Cache the shader property ID for efficiency and safety
     private int dissolvePropertyID;
@@ -86,7 +87,7 @@ public class EnemyDeath : MonoBehaviour, IResettable
         enemyPatrol.DisableAIOnDeath();
 
         Debug.Log("Dissolve started");
-        StartCoroutine(DissolveAndDie());
+        dissolveRoutine = StartCoroutine(DissolveAndDie());
 
         // Disable collisions so dead enemy doesn't block player
         Collider2D col = GetComponent<Collider2D>();
@@ -129,6 +130,7 @@ public class EnemyDeath : MonoBehaviour, IResettable
         }
 
         HideEnemy();
+        dissolveRoutine = null;
     }
 
     private void HideEnemy()
@@ -138,9 +140,21 @@ public class EnemyDeath : MonoBehaviour, IResettable
 
     public void ResetState()
     {
-        if (isDead)
+        bool wasDead = isDead;
+
+        if (wasDead)
         {
-            CancelInvoke();
+            // CancelInvoke() doesn't touch this - DissolveAndDie() is a
+            // coroutine, not an Invoke(). If it's still mid-flight (enemy
+            // died right around the same time as the player), it must be
+            // stopped explicitly or it'll finish on its own later, hide
+            // this GameObject again, and leave isDead permanently false
+            // since nothing else would re-flag it as dead.
+            if (dissolveRoutine != null)
+            {
+                StopCoroutine(dissolveRoutine);
+                dissolveRoutine = null;
+            }
 
             isDead = false;
             hasCountedKill = false;
@@ -160,18 +174,23 @@ public class EnemyDeath : MonoBehaviour, IResettable
                     ren.material.SetFloat(dissolvePropertyID, 0f);
                 }
             }
+        }
 
-            // Reset the AI (position, facing/scale, animator state) BEFORE
-            // the object becomes visible again, so it never shows for a
-            // frame in its old, pre-death orientation/pose.
-            if (enemyPatrol != null)
-            {
-                enemyPatrol.enabled = true;
-                enemyPatrol.ResetAI();
-            }
+        // Always drop back into a clean patrol state - whether this enemy
+        // actually died, or was still alive and mid-chase/mid-alert when
+        // the player died. Without this, a still-alive chasing enemy keeps
+        // isChasingPlayer set and beelines straight for the player's fresh
+        // spawn position the instant the game-over freeze lifts, instead of
+        // needing to re-detect them through the vision cone first.
+        if (enemyPatrol != null)
+        {
+            enemyPatrol.enabled = true;
+            enemyPatrol.ResetAI();
+        }
 
+        if (wasDead)
+        {
             gameObject.SetActive(true);
-
             Debug.Log("Enemy reset");
         }
     }

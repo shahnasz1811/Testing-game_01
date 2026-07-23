@@ -37,6 +37,12 @@ public class MeleeEnemy : MonoBehaviour
         // EnemyPatrol on respawn.
         if (enemyDeath != null && enemyDeath.isDead) return;
 
+        // Stop attacking the instant the player dies - otherwise this keeps
+        // detecting/hitting them (and re-triggering their hurt/die
+        // animation) for the whole respawn delay, since nothing else here
+        // was checking game state.
+        if (LevelManager.instance.isGameOver) return;
+
         cooldownTimer += Time.deltaTime;
 
         bool playerInSight = PlayerInSight();
