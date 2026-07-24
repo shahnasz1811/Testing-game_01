@@ -74,6 +74,22 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    // For boss levels: her defeat alone should open the door, independent of
+    // whatever regular EnemyDeath-based enemies exist elsewhere in the level.
+    // She's never counted by RecalculateEnemies() (she uses ICrushable, not
+    // EnemyDeath - see ICrushable.cs), so EnemyDied()'s deadEnemies/
+    // totalEnemies check is the wrong mechanism for her: it would either
+    // never trigger (if other enemies are still alive) or trigger too early/
+    // coincidentally depending on unrelated enemy counts. Call this directly
+    // from BossController once she's actually defeated instead.
+    public void BossDefeated()
+    {
+        if (isGameOver) return;
+
+        if (victoryCoroutine == null)
+            victoryCoroutine = StartCoroutine(OpenExitDoorAfterDelay());
+    }
+
     public void GameOver()
     {
         if (isGameOver) return;
@@ -130,6 +146,9 @@ public class LevelManager : MonoBehaviour
 
     private IEnumerator ShowVictoryRoutine()
     {
+        if (MusicManager.instance != null)
+            MusicManager.instance.FadeOut();
+
         SaveManager.UnlockNextLevel(levelData.levelNumber);
 
         LevelStats.instance.StopTimer();

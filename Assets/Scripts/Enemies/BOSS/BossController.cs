@@ -60,8 +60,16 @@ public class BossController : MonoBehaviour, ICrushable, IResettable
     [Tooltip("How many boulder drops it takes to kill her. The reference fight uses 1.")]
     [SerializeField] private int hitsToDefeat = 1;
 
+    [Header("Defeat Fall")]
+    [Tooltip("Where she comes to rest after the killing blow. Leave empty to just drop straight down to minY at her current fixed X.")]
+    [SerializeField] private Transform defeatLandingPoint;
+    [Tooltip("How long the fall takes, in seconds.")]
+    [SerializeField] private float fallDuration = 0.8f;
+    [Tooltip("Shape of the fall over time. Default eases in like something heavy picking up speed, then settles on landing.")]
+    [SerializeField] private AnimationCurve fallEase = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
     [Header("Events")]
-    [Tooltip("Wire up whatever should happen on death here: unlock a door, spawn the egg/reward, play a victory beat, etc.")]
+    [Tooltip("Wire up whatever should happen on death here: unlock a door, spawn the egg/reward, play a victory beat, etc. Fires once she's finished falling, not the instant she's hit.")]
     public UnityEvent onBossDefeated;
 
     private Rigidbody2D rb;
@@ -230,6 +238,36 @@ public class BossController : MonoBehaviour, ICrushable, IResettable
         if (anim != null)
             anim.SetTrigger("defeated");
 
+        StartCoroutine(DefeatFallRoutine());
+    }
+
+    // Was previously missing entirely - OnCrushed -> Defeat() didn't move her
+    // at all, so on a Kinematic Rigidbody2D (no gravity) she just froze in
+    // place mid-air with no feedback. This eases her down to a landing spot
+    // the same way PlayIntroRoutine() eases her up - scripted via
+    // rb.MovePosition, not real physics, so no extra ground collider needed.
+    // onBossDefeated now fires once she's actually landed rather than the
+    // instant she's hit, so anything wired to it (e.g. opening a door) plays
+    // after the payoff instead of overlapping it.
+    private IEnumerator DefeatFallRoutine()
+    {
+        Vector2 from = rb.position;
+        Vector2 to = defeatLandingPoint != null ? (Vector2)defeatLandingPoint.position : new Vector2(fixedX, minY);
+
+        float t = 0f;
+        while (t < fallDuration)
+        {
+            t += Time.deltaTime;
+            float eased = fallEase.Evaluate(Mathf.Clamp01(t / fallDuration));
+            rb.MovePosition(Vector2.LerpUnclamped(from, to, eased));
+            yield return null;
+        }
+
+        rb.MovePosition(to);
+
+        if (LevelManager.instance != null)
+            LevelManager.instance.BossDefeated();
+
         onBossDefeated?.Invoke();
     }
 
@@ -244,14 +282,6 @@ public class BossController : MonoBehaviour, ICrushable, IResettable
     // fight does, rather than replaying the whole intro on every death.
     public void ResetState()
     {
-        // Without this guard, a boss that has already been defeated gets
-        // dragged back into BossState.Tracking (and starts firing again)
-        // the next time ANYTHING kills the player, anywhere in the level -
-        // hasEngaged is never cleared, so ResetAll()'s call here used to
-        // fall straight through to the "resume the fight" branch below
-        // even though the fight was long over.
-        if (state == BossState.Defeated) return;
-
         StopAllCoroutines();
 
         hitsTaken = 0;

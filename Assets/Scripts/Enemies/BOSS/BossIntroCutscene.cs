@@ -19,6 +19,8 @@ public class BossIntroCutscene : MonoBehaviour
     [SerializeField] private CinemachineCamera introCamera;
     [Tooltip("An empty Transform used as the camera's temporary focus point during the cutscene. Position doesn't matter, it gets moved every frame.")]
     [SerializeField] private Transform cutsceneFocusPoint;
+    [Tooltip("Crossfades to this track the moment the cutscene starts (fade duration set on MusicManager). Leave empty to leave the current music alone.")]
+    [SerializeField] private AudioClip bossMusic;
 
     [Header("Behaviour")]
     [Tooltip("Only fires while the player is facing/moving right, matching 'goes to the right' rather than backtracking into the zone.")]
@@ -31,12 +33,6 @@ public class BossIntroCutscene : MonoBehaviour
     [SerializeField] private float panBackTime = 0.8f;
 
     private bool hasTriggered;
-    private Collider2D col;
-
-    private void Awake()
-    {
-        col = GetComponent<Collider2D>();
-    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -58,6 +54,9 @@ public class BossIntroCutscene : MonoBehaviour
 
     private IEnumerator PlayCutscene(Transform player)
     {
+        if (MusicManager.instance != null)
+            MusicManager.instance.PlayTrack(bossMusic);
+
         PlayerMovement_02 movement = player.GetComponent<PlayerMovement_02>();
         Rigidbody2D playerRb = player.GetComponent<Rigidbody2D>();
 
@@ -132,7 +131,6 @@ public class BossIntroCutscene : MonoBehaviour
         }
 
         if (movement != null) movement.enabled = true;
-        col.enabled = false; // prevent re-triggering if the player backtracks
 
         boss.BeginCombat();
     }

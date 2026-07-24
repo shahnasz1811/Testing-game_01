@@ -30,6 +30,7 @@ public class CrushKill : MonoBehaviour, IResettable
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log($"CrushKill hit '{collision.gameObject.name}' tag={collision.gameObject.tag} impact={collision.relativeVelocity.magnitude}");
         if (!collision.gameObject.CompareTag("Enemy")) return;
 
         float impact = collision.relativeVelocity.magnitude;
