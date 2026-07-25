@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 
     public List<IResettable> resettables = new List<IResettable>();
     //public bool isGameOver = false;
-    
+
     //public int areaIndex;
     //public Door exitDoor;
     //private int totalEnemies;
@@ -17,6 +17,16 @@ public class GameManager : MonoBehaviour
     public float totalRunTime = 0f;
     public int totalDeaths = 0;
 
+    // Snapshot of the FINAL level's own numbers specifically (not the
+    // accumulated run totals above) - captured by LevelManager right before
+    // it loads the Leaderboard scene, since LevelStats and LevelManager are
+    // both scene-local and get destroyed on that transition. The Leaderboard
+    // scene's victory display reads these instead.
+    [Header("Final Level Snapshot (for Leaderboard scene)")]
+    public float finalLevelTime;
+    public int finalLevelDeaths;
+    public int finalLevelEnemiesKilled;
+    public int finalLevelTotalEnemies;
 
     /*[Header("Level Complete")]
     [SerializeField] private float victoryCheckDelay = 1f;
@@ -275,7 +285,14 @@ void Start()
 
     public void GoToLeaderboard()
     {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Leaderboard");
+    }
 
+    public void GoToMainMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainMenu");
     }
 
     public void GoToNextLevel()

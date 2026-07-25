@@ -43,8 +43,14 @@ public class LevelManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.V))
         {
-            StartCoroutine(OpenExitDoorAfterDelay());
+            StartCoroutine(ShowVictoryRoutine());
             //LeaderboardManager.instance.ClearLeaderboard();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ResetGameState();
+            ResetAll();
         }
     }
     public void RegisterResettable(IResettable obj)
@@ -160,6 +166,11 @@ public class LevelManager : MonoBehaviour
 
         if (levelData.isFinalLevel)
         {
+            GameManager.instance.finalLevelTime = LevelStats.instance.timer;
+            GameManager.instance.finalLevelDeaths = LevelStats.instance.deathCount;
+            GameManager.instance.finalLevelEnemiesKilled = deadEnemies;
+            GameManager.instance.finalLevelTotalEnemies = totalEnemies;
+
             int finalScore = GameManager.instance.CalculateScore();
 
             LeaderboardManager.instance.AddEntry(
@@ -174,7 +185,7 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            victoryScreen.Show(levelData, true, deadEnemies, totalEnemies);
+            victoryScreen.Show(levelData, true, deadEnemies, totalEnemies, LevelStats.instance.timer, LevelStats.instance.deathCount);
         }
     }
 

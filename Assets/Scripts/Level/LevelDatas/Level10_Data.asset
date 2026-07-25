@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level10_Data
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelNumber: 10
-  isFinalLevel: 0
+  isFinalLevel: 1
   targetTime: 120
   requireAllEnemiesKilled: 1
   maxDeathsForStar: 3

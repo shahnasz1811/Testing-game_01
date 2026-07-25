@@ -23,19 +23,14 @@ public class VictoryScreen : MonoBehaviour
     [SerializeField] private GameObject timeFail;
     [SerializeField] private GameObject deathFail;
 
-    private void Awake()
+    /*private void Awake()
     {
         gameObject.SetActive(false);
-    }
+    }*/
 
-    public void Show(LevelData levelData, bool allEnemiesKilled, int enemiesKilled, int totalEnemies)
+    public void Show(LevelData levelData, bool allEnemiesKilled, int enemiesKilled, int totalEnemies, float finalTime, int deaths)
     {
         gameObject.SetActive(true);
-
-        LevelStats.instance.StopTimer();
-
-        float finalTime = LevelStats.instance.timer;
-        int deaths = LevelStats.instance.deathCount;
 
         bool earnedObjectiveStar = allEnemiesKilled;
         bool earnedTimeStar = finalTime <= levelData.targetTime;

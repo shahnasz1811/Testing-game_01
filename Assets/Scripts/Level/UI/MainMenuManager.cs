@@ -66,7 +66,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void OpenLeaderboard()
     {
-        SceneManager.LoadScene(7);
+        SceneManager.LoadScene("Leaderboard");
     }
 
     public void QuitGame()

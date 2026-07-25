@@ -58,9 +58,15 @@ public class LeaderboardManager : MonoBehaviour
     {
         if (PlayerPrefs.HasKey(key))
         {
-            data = JsonUtility.FromJson<LeaderboardData>(
-                PlayerPrefs.GetString(key)
-            );
+            data = JsonUtility.FromJson<LeaderboardData>(PlayerPrefs.GetString(key));
+
+            // JsonUtility can hand back an object with a null List if the
+            // saved JSON is from an older/different schema (missing the
+            // "entries" field entirely) - without this, GetEntries() would
+            // return null and LeaderboardUI.BuildLeaderboard()'s first line
+            // (entries.RemoveAll(...)) would throw, breaking the whole scene.
+            if (data == null || data.entries == null)
+                data = new LeaderboardData();
         }
     }
 

@@ -9,6 +9,12 @@ public class LevelSelectManager : MonoBehaviour
     public GameObject[] level2Stars;
     public GameObject[] level3Stars;
     public GameObject[] level4Stars;
+    public GameObject[] level5Stars;
+    public GameObject[] level6Stars;
+    public GameObject[] level7Stars;
+    public GameObject[] level8Stars;
+    public GameObject[] level9Stars;
+    public GameObject[] level10Stars;
 
     public Button[] levelButtons;
 
@@ -47,6 +53,12 @@ public class LevelSelectManager : MonoBehaviour
         UpdateStarsForLevel(2, level2Stars);
         UpdateStarsForLevel(3, level3Stars);
         UpdateStarsForLevel(4, level4Stars);
+        UpdateStarsForLevel(5, level5Stars);
+        UpdateStarsForLevel(6, level6Stars);
+        UpdateStarsForLevel(7, level7Stars);
+        UpdateStarsForLevel(8, level8Stars);
+        UpdateStarsForLevel(9, level9Stars);
+        UpdateStarsForLevel(10, level10Stars);
     }
 
     private void UpdateStarsForLevel(int levelNumber, GameObject[] stars)
