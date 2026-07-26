@@ -403,6 +403,7 @@ MonoBehaviour:
   patrolSpeed: 2
   chaseSpeed: 5
   acceleration: 3
+  chaseDeadzone: 0.15
   movingLeft: 0
   idleDuration: 1
   anim: {fileID: 5520174095685627736}
@@ -416,6 +417,7 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 64
+  blockingBox: {fileID: 0}
 --- !u!1 &6749884435895202342
 GameObject:
   m_ObjectHideFlags: 0
@@ -504,11 +506,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701074354486, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_SortingLayer
-      value: -2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701074354486, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_SortingLayerID
-      value: -822680059
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701074354486, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -532,11 +534,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701487851566, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_SortingLayer
-      value: -2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701487851566, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_SortingLayerID
-      value: -822680059
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701487851566, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -648,11 +650,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701876574791, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_SortingLayer
-      value: -2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701876574791, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: m_SortingLayerID
-      value: -822680059
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1789626701876574791, guid: b6665c1d1459a9648b89cb38e5090a5e, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'

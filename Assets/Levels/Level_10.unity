@@ -26641,6 +26641,10 @@ PrefabInstance:
       propertyPath: levelData
       value: 
       objectReference: {fileID: 11400000, guid: 2109d3366556ab34cba2c1be0191ea55, type: 2}
+    - target: {fileID: 5893730585199960272, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5966116796089280579, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: ShapeModule.m_Scale.x
       value: 48.89

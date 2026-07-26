@@ -46,9 +46,10 @@ public class MeleeEnemy : MonoBehaviour
         cooldownTimer += Time.deltaTime;
 
         bool playerInSight = PlayerInSight();
+        bool boxBlocking = enemyPatrol != null && enemyPatrol.blockingBox != null;
 
-        //attack only when player is in sight
-        if (playerInSight)
+        //attack if the player is in range, or a box is blocking the path
+        if (playerInSight || boxBlocking)
         {
             if (cooldownTimer >= attackCooldown)
             {
@@ -110,8 +111,19 @@ public class MeleeEnemy : MonoBehaviour
              boxCollider.bounds.size.z));
     }
 
+    // Still named DamagePlayer since it's wired up as an Animation Event on
+    // the meleeAttack clip already - renaming it would silently break that
+    // binding. Now checks the box first since that's what's actually in
+    // front of the enemy when enemyPatrol.blockingBox is set.
     public void DamagePlayer()
     {
+        if (enemyPatrol != null && enemyPatrol.blockingBox != null)
+        {
+            Debug.Log("Enemy HIT box");
+            enemyPatrol.blockingBox.TakeDamage(damage);
+            return;
+        }
+
         Debug.Log("Enemy HIT player");
 
         if (PlayerInSight())

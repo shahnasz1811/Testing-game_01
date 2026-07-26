@@ -12,6 +12,12 @@ public class LevelManager : MonoBehaviour
     private int deadEnemies;
     public bool isGameOver = false;
 
+    // Read-only from outside - UI reads this, nothing should ever set it
+    // directly. totalEnemies/deadEnemies stay private and get updated the
+    // same way they already were (RecalculateEnemies() on Start(),
+    // EnemyDied() as enemies die).
+    public int EnemiesRemaining => Mathf.Max(0, totalEnemies - deadEnemies);
+
     [SerializeField] private float victoryCheckDelay = 1f;
     [SerializeField] private VictoryScreen victoryScreen;
     [SerializeField] private LevelData levelData;
@@ -43,7 +49,7 @@ public class LevelManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.V))
         {
-            StartCoroutine(ShowVictoryRoutine());
+            StartCoroutine(OpenExitDoorAfterDelay());
             //LeaderboardManager.instance.ClearLeaderboard();
         }
 

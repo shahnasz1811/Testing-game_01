@@ -14,6 +14,8 @@ public class EnemyPatrol : MonoBehaviour
     [SerializeField] private float patrolSpeed = 2f;
     [SerializeField] private float chaseSpeed = 5f;
     [SerializeField] private float acceleration = 3f;
+    [Tooltip("While chasing, if the player's X position is within this distance of the enemy's, don't change facing/direction. Without this, the player standing directly above/below the enemy makes it flicker left-right every frame as the sign of the tiny X difference keeps flipping.")]
+    [SerializeField] private float chaseDeadzone = 0.15f;
 
     private float currentSpeed;
     private Vector3 initScale;
@@ -59,6 +61,11 @@ public class EnemyPatrol : MonoBehaviour
     private Rigidbody2D RB;
     private EnemyDeath enemyDeath;
     private bool waitingAtWall;
+
+    // Set whenever the wall-check ray hits a Box instead of a real wall (see
+    // IsTouchingWall()/CheckForBox() below). MeleeEnemy reads this to attack
+    // the box instead of the player - see its Update()/DamagePlayer().
+    public Box blockingBox;
     #endregion
 
     private void Awake()
@@ -110,6 +117,20 @@ public class EnemyPatrol : MonoBehaviour
         // detection (below) would stop running too. Idling in-place here
         // keeps animation state correct and keeps this Update loop alive.
         if (isInMeleeRange)
+        {
+            anim.SetBool("isMoving", false);
+            return;
+        }
+
+        // A Box sitting on wallLayer used to read as a permanent wall here -
+        // the enemy would idle/turn at it forever while its own collider
+        // kept physically overlapping the box's (the actual "stuck" bug).
+        // Catching it here instead freezes the enemy the same way
+        // isInMeleeRange does, and lets MeleeEnemy attack it - once the box
+        // breaks (its collider disables itself, see Box.Break()) this stops
+        // detecting anything and patrol/chase resumes on its own next frame.
+        blockingBox = CheckForBox();
+        if (blockingBox != null)
         {
             anim.SetBool("isMoving", false);
             return;
@@ -206,19 +227,33 @@ public class EnemyPatrol : MonoBehaviour
 
         if (isChasingPlayer)
         {
-            anim.SetBool("isMoving", true);
-            Vector3 direction;
+            Vector3 direction = Vector3.zero;
 
-            if (playerTransform != null && enemy.position.x > playerTransform.position.x)
+            if (playerTransform != null)
             {
-                direction = Vector3.left;
-                enemy.localScale = new Vector3(-Mathf.Abs(initScale.x), initScale.y, initScale.z);
+                float xDiff = playerTransform.position.x - enemy.position.x;
+
+                // Only change facing/direction once the player is far enough
+                // to one side - inside the deadzone, keep whatever facing we
+                // already had instead of re-deciding every frame.
+                if (xDiff < -chaseDeadzone)
+                {
+                    direction = Vector3.left;
+                    enemy.localScale = new Vector3(-Mathf.Abs(initScale.x), initScale.y, initScale.z);
+                }
+                else if (xDiff > chaseDeadzone)
+                {
+                    direction = Vector3.right;
+                    enemy.localScale = new Vector3(Mathf.Abs(initScale.x), initScale.y, initScale.z);
+                }
             }
-            else
-            {
-                direction = Vector3.right;
-                enemy.localScale = new Vector3(Mathf.Abs(initScale.x), initScale.y, initScale.z);
-            }
+
+            anim.SetBool("isMoving", direction != Vector3.zero);
+
+            // Player is directly overhead (within the deadzone) - hold
+            // position rather than moving toward a direction we didn't pick.
+            if (direction == Vector3.zero)
+                return;
 
             if (IsTouchingWall())
             {
@@ -294,12 +329,26 @@ public class EnemyPatrol : MonoBehaviour
         enemy.position += direction * currentSpeed * Time.deltaTime;
     }
 
-    private bool IsTouchingWall()
+    private RaycastHit2D WallCheckHit()
     {
-        if (wallCheck == null) return false;
+        if (wallCheck == null) return default;
         Vector2 direction = movingLeft ? Vector2.left : Vector2.right;
 
         return Physics2D.Raycast(wallCheck.position, direction, wallCheckDistance, wallLayer);
+    }
+
+    private bool IsTouchingWall()
+    {
+        RaycastHit2D hit = WallCheckHit();
+        // A Box on wallLayer isn't a real wall - CheckForBox()/blockingBox
+        // handles it separately (attack it instead of turning around at it).
+        return hit.collider != null && hit.collider.GetComponent<Box>() == null;
+    }
+
+    private Box CheckForBox()
+    {
+        RaycastHit2D hit = WallCheckHit();
+        return hit.collider != null ? hit.collider.GetComponent<Box>() : null;
     }
 
     // Called instantly by EnemyDeath.Die() to prevent vision cone bugs
@@ -320,6 +369,7 @@ public class EnemyPatrol : MonoBehaviour
         isAlerting = false;
         waitingAtWall = false;
         isInMeleeRange = false;
+        blockingBox = null;
 
         alertTimer = 0f;
         loseSightTimer = 0f;
