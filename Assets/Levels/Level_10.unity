@@ -503,7 +503,7 @@ GameObject:
   - component: {fileID: 181673620}
   m_Layer: 0
   m_Name: Grid
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -577,19 +577,19 @@ MonoBehaviour:
   firePoint: {fileID: 1341180655}
   startPoolSize: 20
   telegraphDuration: 0.35
-  timeBetweenPatterns: 2.1
+  timeBetweenPatterns: 3
   minPlayerHeightToAttack: -18.5
   telegraphSprite: {fileID: 0}
   telegraphColor: {r: 1, g: 0.35, b: 0.35, a: 1}
-  aimedBurstCount: 3
+  aimedBurstCount: 4
   aimedBurstInterval: 0.15
-  aimedSpeed: 8
+  aimedSpeed: 7
   spreadCount: 6
-  spreadArcDegrees: 110
+  spreadArcDegrees: 90
   spreadSpeed: 6
   volleyCount: 6
   volleyInterval: 0.12
-  volleySpeed: 9
+  volleySpeed: 8
 --- !u!114 &244734082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5631,7 +5631,7 @@ GameObject:
   - component: {fileID: 2073888786}
   m_Layer: 6
   m_Name: Ground
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -26602,11 +26602,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5562692383138339793, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.815763
+      value: -6.8237624
       objectReference: {fileID: 0}
     - target: {fileID: 5562692383138339793, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -18.23303
+      value: -18.233011
       objectReference: {fileID: 0}
     - target: {fileID: 5562692383138339793, guid: bbf4dca975485ff4fb690e4e8d570d55, type: 3}
       propertyPath: m_LocalPosition.z

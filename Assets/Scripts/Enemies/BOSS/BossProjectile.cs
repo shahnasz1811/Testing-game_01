@@ -8,10 +8,16 @@ using UnityEngine;
 //     contact with anything tagged "Hazard" - no extra code needed here.
 //   - Collider2D must be "Is Trigger" ON.
 //   - Add a Rigidbody2D, Body Type = Kinematic, Gravity Scale doesn't matter.
+//
+// NOTE: this projectile now flies straight through walls/ground/cover (see
+// wallTag below) instead of stopping on contact with them - only the player
+// or the lifetime timer ends it. Makes hiding behind cover in the boss arena
+// no longer a safe option.
 [RequireComponent(typeof(Rigidbody2D))]
 public class BossProjectile : MonoBehaviour
 {
     [SerializeField] private float lifetime = 6f;
+    [SerializeField] private string wallTag = "Ground"; // NEW: tag used by walls/ground/cover geometry - ignored on contact so shots pass through it
 
     private Rigidbody2D rb;
     private float timer;
@@ -58,7 +64,11 @@ public class BossProjectile : MonoBehaviour
         // instead of a shot.
         if (collision.GetComponent<BossProjectile>() != null) return;
 
-        Deactivate(); // hit the player, a wall, cover, whatever - either way it's done
+        // NEW: ignore walls/ground/cover too - shots now punch straight through
+        // instead of despawning on contact, so cover no longer blocks them.
+        if (collision.CompareTag(wallTag)) return;
+
+        Deactivate(); // hit the player - the only thing left that stops it
     }
 
     private void Deactivate()

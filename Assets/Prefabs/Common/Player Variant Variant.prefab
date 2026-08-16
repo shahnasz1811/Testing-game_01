@@ -188,6 +188,10 @@ PrefabInstance:
       propertyPath: m_Icon
       value: 
       objectReference: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
+    - target: {fileID: 4634569062717220996, guid: 0bd5e517fc7ffc14bb76e248295be523, type: 3}
+      propertyPath: _enemyGroundLayer.m_Bits
+      value: 512
+      objectReference: {fileID: 0}
     - target: {fileID: 5422838424090739599, guid: 0bd5e517fc7ffc14bb76e248295be523, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.35

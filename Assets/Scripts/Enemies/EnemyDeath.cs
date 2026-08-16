@@ -10,6 +10,10 @@ public class EnemyDeath : MonoBehaviour, IResettable
     [Header("Respawn Settings")]
     public Transform respawnPoint;
 
+    [Tooltip("Which enemy type this counts as for PerTypeEnemyCounterUI - e.g. \"Melee\". Purely a display label, doesn't affect behavior.")]
+    [SerializeField] private string enemyType = "Melee";
+    public string EnemyType => enemyType;
+
     public bool isDead;
     private SpriteRenderer[] spriteRenders;
 

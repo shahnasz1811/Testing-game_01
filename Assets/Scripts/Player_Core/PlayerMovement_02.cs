@@ -20,6 +20,7 @@ public class PlayerMovement_02 : MonoBehaviour
     public bool IsJumping { get; private set; }
     public bool IsWallJumping { get; private set; }
     public bool IsSliding { get; private set; }
+    private bool _isGrounded; // NEW: true only while physically touching ground/enemy-ground THIS frame - no coyote grace. Used for movement acceleration so coyote time only affects jump eligibility, not run/air acceleration.
 
     // Timers
     public float LastOnGroundTime { get; private set; }
@@ -45,6 +46,7 @@ public class PlayerMovement_02 : MonoBehaviour
 
     [Header("Layers & Tags")]
     [SerializeField] private LayerMask _groundLayer;
+    [SerializeField] private LayerMask _enemyGroundLayer; // layers that count as standable ground (e.g. enemy heads) but should NOT count as walls
     #endregion
 
     private void Awake()
@@ -114,22 +116,33 @@ public class PlayerMovement_02 : MonoBehaviour
         if (IsJumping) return;
 
         // Ground Check
-        if (Physics2D.OverlapBox(_groundCheckPoint.position, _groundCheckSize, 0, _groundLayer))
+        // NEW: _isGrounded reflects raw physical contact only (ignores coyote grace) - Run() uses this for acceleration.
+        // LastOnGroundTime keeps the coyote-time grace value, still used for jump eligibility (CanJump, etc).
+        _isGrounded = Physics2D.OverlapBox(_groundCheckPoint.position, _groundCheckSize, 0, _groundLayer | _enemyGroundLayer);
+        if (_isGrounded)
         {
             LastOnGroundTime = Data.coyoteTime;
         }
 
-        // Right Wall Check
-        if (((Physics2D.OverlapBox(_frontWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && IsFacingRight)
-                || (Physics2D.OverlapBox(_backWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && !IsFacingRight)) && !IsWallJumping)
-            LastOnWallRightTime = Data.coyoteTime;
+        // NEW: only evaluate wall checks while actually airborne. Previously these ran even
+        // while standing on a platform, so a tall wall-check box could graze your own platform's
+        // edge/corner and falsely arm LastOnWallRightTime/LeftTime. A jump pressed just after ground
+        // coyote time expired would then fall through to CanWallJump() and fire a full-strength
+        // WallJump() sideways impulse instead of a normal jump - the "flung across the screen" bug.
+        if (!_isGrounded)
+        {
+            // Right Wall Check
+            if (((Physics2D.OverlapBox(_frontWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && IsFacingRight)
+                    || (Physics2D.OverlapBox(_backWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && !IsFacingRight)) && !IsWallJumping)
+                LastOnWallRightTime = Data.coyoteTime;
 
-        // Left Wall Check
-        if (((Physics2D.OverlapBox(_frontWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && !IsFacingRight)
-            || (Physics2D.OverlapBox(_backWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && IsFacingRight)) && !IsWallJumping)
-            LastOnWallLeftTime = Data.coyoteTime;
+            // Left Wall Check
+            if (((Physics2D.OverlapBox(_frontWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && !IsFacingRight)
+                || (Physics2D.OverlapBox(_backWallCheckPoint.position, _wallCheckSize, 0, _groundLayer) && IsFacingRight)) && !IsWallJumping)
+                LastOnWallLeftTime = Data.coyoteTime;
 
-        LastOnWallTime = Mathf.Max(LastOnWallLeftTime, LastOnWallRightTime);
+            LastOnWallTime = Mathf.Max(LastOnWallLeftTime, LastOnWallRightTime);
+        }
     }
 
     private void HandleJumpLogic()
@@ -217,7 +230,10 @@ public class PlayerMovement_02 : MonoBehaviour
         targetSpeed = Mathf.Lerp(RB.linearVelocity.x, targetSpeed, lerpAmount);
 
         float accelRate;
-        if (LastOnGroundTime > 0)
+        // CHANGED: was `LastOnGroundTime > 0` - that stayed true for the whole coyote window,
+        // so Run() applied full ground acceleration even while already airborne off a ledge,
+        // letting horizontal speed build up too much before a delayed coyote-time jump fired.
+        if (_isGrounded)
             accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? Data.runAccelAmount : Data.runDeccelAmount;
         else
             accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? Data.runAccelAmount * Data.accelInAir : Data.runDeccelAmount * Data.deccelInAir;
@@ -272,8 +288,12 @@ public class PlayerMovement_02 : MonoBehaviour
 
         Vector2 force = new Vector2(Data.wallJumpForce.x, Data.wallJumpForce.y) { x = Data.wallJumpForce.x * dir };
 
-        if (Mathf.Sign(RB.linearVelocity.x) != Mathf.Sign(force.x))
-            force.x -= RB.linearVelocity.x;
+        // CHANGED: unconditionally cancel existing horizontal velocity before adding the impulse,
+        // not just when it opposes the escape direction. Previously, if you were already moving the
+        // SAME way as the wall-jump direction, the impulse stacked on top of that existing velocity
+        // instead of replacing it (e.g. Run Max Speed 7 + Wall Jump Force X 7 = 14) - the "too far" bug.
+        // This guarantees a wall jump always launches at exactly Data.wallJumpForce.x, no more, no less.
+        force.x -= RB.linearVelocity.x;
 
         if (RB.linearVelocity.y < 0)
             force.y -= RB.linearVelocity.y;

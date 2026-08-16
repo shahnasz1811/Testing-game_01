@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 588fb48667d0205439f64067adaac96f
+guid: 33ae551aae4b32f48934cf8ebb2c39c4
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -850683326093948436
-    second: FGMenu_0
+      213: 53279043483636257
+    second: ENEMYIcon_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 2
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: FGMenu_0
+      name: ENEMYIcon_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1920
-        height: 1080
+        x: 579
+        y: 126
+        width: 753
+        height: 742
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ce982d3a504c134f0800000000000000
-      internalID: -850683326093948436
+      spriteID: 12290dcf1094db000800000000000000
+      internalID: 53279043483636257
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      FGMenu_0: -850683326093948436
+      ENEMYIcon_0: 53279043483636257
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
