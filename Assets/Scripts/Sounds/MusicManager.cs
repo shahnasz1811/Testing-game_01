@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
 // Persistent audio singleton - survives scene loads (DontDestroyOnLoad), same
 // pattern as your LevelManager/GameManager instance fields. Handles
@@ -21,6 +22,8 @@ public class MusicManager : MonoBehaviour
     [SerializeField] private float volume = 0.6f;
     [Tooltip("Used whenever PlayTrack/FadeOut are called without an explicit duration.")]
     [SerializeField] private float defaultFadeDuration = 1f;
+    [Tooltip("Assign your AudioMixer's \"Music\" group here - drives its exposed MusicVolume parameter via SettingsManager. Purely routing: the crossfade still animates each AudioSource's own .volume for blending between tracks, independent of the mixer group's fader.")]
+    [SerializeField] private AudioMixerGroup outputMixerGroup;
 
     private AudioSource sourceA;
     private AudioSource sourceB;
@@ -51,9 +54,28 @@ public class MusicManager : MonoBehaviour
             s.loop = true;
             s.playOnAwake = false;
             s.volume = 0f;
+            s.outputAudioMixerGroup = outputMixerGroup;
         }
 
         activeSource = sourceA;
+    }
+
+    // Still here in case you want it for something code-driven later (e.g.
+    // ducking music during a cutscene) - SettingsManager no longer calls
+    // this for the volume slider, since that now goes straight through the
+    // AudioMixer's exposed MusicVolume parameter instead (see
+    // SettingsManager.cs), which is the correct source of truth for the
+    // user's saved preference now.
+
+    // Called by the settings slider (via SettingsManager.SetMusicVolume())
+    // for an immediate live update, separate from PlayTrack/FadeOut's own
+    // volume animation.
+    public void SetVolume(float value)
+    {
+        volume = Mathf.Clamp01(value);
+
+        if (fadeCoroutine == null && activeSource != null)
+            activeSource.volume = volume;
     }
 
     // Crossfades to a new track over fadeDuration seconds (defaultFadeDuration

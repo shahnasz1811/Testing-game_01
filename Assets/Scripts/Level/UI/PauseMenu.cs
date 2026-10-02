@@ -55,6 +55,12 @@ public class PauseMenu : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
     }
 
+    public void OpenSettings()
+    {
+        if (SettingsManager.instance != null)
+            SettingsManager.instance.OpenSettings();
+    }
+
     public void QuitGame()
     {
         #if UNITY_EDITOR

@@ -43,12 +43,6 @@ public class BossFinisherCollectible : MonoBehaviour, IResettable
     [SerializeField] private SpriteRenderer visual;      // auto-found on this object if left empty
     [SerializeField] private Collider2D triggerCollider; // auto-found on this object if left empty
 
-    [Header("Safety")]
-    [Tooltip("Tag used by your projectile objects. All active projectiles with this tag are destroyed the instant the collectible is grabbed, so nothing already in flight can hit the frozen player.")]
-    [SerializeField] private string projectileTag = "Hazard";
-    [Tooltip("Layer the player's collider(s) are moved to for the duration of the freeze so nothing spawned during the hold can hit them either. Leave blank to skip this step.")]
-    [SerializeField] private string invinciblePlayerLayer = "PlayerInvincible";
-
     private bool collected;
 
     private void Awake()
@@ -71,10 +65,10 @@ public class BossFinisherCollectible : MonoBehaviour, IResettable
         PlayerMovement_02 movement = collision.GetComponent<PlayerMovement_02>();
         Rigidbody2D playerRb = collision.GetComponent<Rigidbody2D>();
 
-        StartCoroutine(FinisherRoutine(collision.gameObject, movement, playerRb));
+        StartCoroutine(FinisherRoutine(movement, playerRb));
     }
 
-    private IEnumerator FinisherRoutine(GameObject player, PlayerMovement_02 movement, Rigidbody2D playerRb)
+    private IEnumerator FinisherRoutine(PlayerMovement_02 movement, Rigidbody2D playerRb)
     {
         // Hide/disable the pickup immediately so it can't be grabbed twice.
         if (visual != null) visual.enabled = false;
@@ -82,16 +76,6 @@ public class BossFinisherCollectible : MonoBehaviour, IResettable
 
         if (movement != null) movement.enabled = false;
         if (playerRb != null) playerRb.linearVelocity = Vector2.zero;
-
-        // Wipe anything already in flight and shield the player from
-        // anything that spawns during the hold, so a stray hit can't
-        // undo the win the moment it's triggered.
-        ClearActiveProjectiles();
-        int originalLayer = player.layer;
-        int shieldLayer = LayerMask.NameToLayer(invinciblePlayerLayer);
-        bool canShield = shieldLayer != -1;
-        if (canShield)
-            SetLayerRecursively(player, shieldLayer);
 
         bool drivingCamera = holdPoint != null && (cameraFollow != null || introCamera != null);
         Transform originalCameraFollowTarget = null;
@@ -133,13 +117,6 @@ public class BossFinisherCollectible : MonoBehaviour, IResettable
 
         yield return ReleaseRocks();
 
-        // One more sweep in case a rock's crush effect or debris spawned
-        // anything projectile-like right at the end of the hold.
-        ClearActiveProjectiles();
-
-        if (canShield)
-            SetLayerRecursively(player, originalLayer);
-
         if (movement != null) movement.enabled = true;
     }
 
@@ -158,25 +135,6 @@ public class BossFinisherCollectible : MonoBehaviour, IResettable
             if (i < rocksToRelease.Length - 1 && delayBetweenRocks > 0f)
                 yield return new WaitForSeconds(delayBetweenRocks);
         }
-    }
-
-    private void ClearActiveProjectiles()
-    {
-        if (string.IsNullOrEmpty(projectileTag)) return;
-
-        GameObject[] projectiles = GameObject.FindGameObjectsWithTag(projectileTag);
-        for (int i = 0; i < projectiles.Length; i++)
-        {
-            if (projectiles[i] != null)
-                Destroy(projectiles[i]);
-        }
-    }
-
-    private static void SetLayerRecursively(GameObject go, int layer)
-    {
-        go.layer = layer;
-        foreach (Transform child in go.transform)
-            SetLayerRecursively(child.gameObject, layer);
     }
 
     public void ResetState()

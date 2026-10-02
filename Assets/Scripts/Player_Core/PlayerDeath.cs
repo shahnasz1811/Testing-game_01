@@ -28,7 +28,8 @@ public class PlayerDeath : MonoBehaviour
 
         if (collision.CompareTag("Hazard") ||
             collision.CompareTag("DeathZone") ||
-            collision.CompareTag("Enemy"))
+            collision.CompareTag("Enemy") ||
+            collision.CompareTag("Projectile"))
         {
             Die();
         }

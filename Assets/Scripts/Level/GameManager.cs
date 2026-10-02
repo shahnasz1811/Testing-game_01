@@ -95,12 +95,17 @@ void Start()
 
     public int CalculateScore()
     {
-        int baseScore = 10000;
+        int baseScore = 100000;
 
-        int timePenalty = (int)(totalRunTime * 8f);
-        int deathPenalty = totalDeaths * 250;
+        // Each second alive shaves off a small % of the score (compounding)
+        float timeMultiplier = Mathf.Pow(0.998f, totalRunTime);
 
-        return Mathf.Max(0, baseScore - timePenalty - deathPenalty);
+        // Each death shaves off a bigger % (compounding)
+        float deathMultiplier = Mathf.Pow(0.85f, totalDeaths);
+
+        float finalScore = baseScore * timeMultiplier * deathMultiplier;
+
+        return Mathf.Max(0, Mathf.RoundToInt(finalScore));
     }
 
     /*public void RegisterResettable(IResettable obj)

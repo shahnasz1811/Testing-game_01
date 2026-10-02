@@ -411,7 +411,7 @@ MonoBehaviour:
   dynamicVisionCone: {fileID: 1288115915489111301}
   isChasingPlayer: 0
   isInMeleeRange: 0
-  alertDuration: 1
+  alertDuration: 0.3
   loseSightCooldown: 1.5
   wallCheck: {fileID: 3963718019876542413}
   wallCheckDistance: 0.2

@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -7283344725674522116, guid: dd679044a41335b40933607a6528e469, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: -3650504085159940348, guid: 43b13e5a71780c7488cc8ff842b57fa0, type: 2}
     - target: {fileID: 4963842019349426854, guid: dd679044a41335b40933607a6528e469, type: 3}
       propertyPath: m_Color.b
       value: 0.5382699

@@ -64,6 +64,12 @@ public class MainMenuManager : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
+    public void OpenSettings()
+    {
+        if (SettingsManager.instance != null)
+            SettingsManager.instance.OpenSettings();
+    }
+
     public void OpenLeaderboard()
     {
         SceneManager.LoadScene("Leaderboard");
@@ -71,6 +77,12 @@ public class MainMenuManager : MonoBehaviour
 
     public void QuitGame()
     {
+#if UNITY_EDITOR
+            // Exits Play Mode if running inside the Unity Editor
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+        // Closes the actual built application (.exe, .app, Android build, etc.)
         Application.Quit();
+#endif
     }
 }
