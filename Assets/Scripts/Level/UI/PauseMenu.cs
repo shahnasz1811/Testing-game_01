@@ -14,7 +14,13 @@ public class PauseMenu : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        // Escape or controller Start toggles pause. B (Cancel) only closes it while paused,
+        // because B is also the jump button during gameplay.
+        bool togglePressed = Input.GetKeyDown(KeyCode.Escape)
+                          || Input.GetKeyDown(KeyCode.JoystickButton7); // Start / Menu
+        bool closePressed = isPaused && Input.GetButtonDown("Cancel");
+
+        if (togglePressed || closePressed)
         {
             if (isPaused)
             {
@@ -46,7 +52,7 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1f;
         container.SetActive(false);
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-        
+
     }
 
     public void LoadMainMenu()
@@ -63,12 +69,12 @@ public class PauseMenu : MonoBehaviour
 
     public void QuitGame()
     {
-        #if UNITY_EDITOR
-            // Exits Play Mode if running inside the Unity Editor
-            UnityEditor.EditorApplication.isPlaying = false;
-        #else
+#if UNITY_EDITOR
+        // Exits Play Mode if running inside the Unity Editor
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
             // Closes the actual built application (.exe, .app, Android build, etc.)
         Application.Quit();
-        #endif
+#endif
     }
 }

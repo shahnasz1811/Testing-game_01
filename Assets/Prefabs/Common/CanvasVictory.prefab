@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7132051624478612562}
   - component: {fileID: 2709370592445138723}
   - component: {fileID: 2087883790234009596}
+  - component: {fileID: 4311248524728395528}
   m_Layer: 5
   m_Name: VictoryPanel
   m_TagString: Untagged
@@ -101,6 +102,20 @@ MonoBehaviour:
   objectiveFail: {fileID: 1900260104707161671}
   timeFail: {fileID: 600194018221920800}
   deathFail: {fileID: 5638922765022148212}
+--- !u!114 &4311248524728395528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7050724798440145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36066edc9f26bf04abdc8b471fcaa2e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MenuControllerFocus
+  firstSelected: {fileID: 1225005444360005370}
+  reselectIfLost: 1
 --- !u!1 &600194018221920800
 GameObject:
   m_ObjectHideFlags: 0
@@ -1009,7 +1024,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -1021,7 +1036,7 @@ MonoBehaviour:
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
     m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 3254872338851742718, guid: 01627e37ea79a6d42a5b109761f92ae1, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -2177,7 +2192,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -2189,7 +2204,7 @@ MonoBehaviour:
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
     m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 6883159855152289561, guid: 474bbf4fb99a387488bf51ccae861d8c, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -2435,6 +2450,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 5910831048704238384}
     m_Modifications:
     - target: {fileID: 2028320220537416690, guid: f021aac017886b84e92c1a4fe4146288, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2028320220537416690, guid: f021aac017886b84e92c1a4fe4146288, type: 3}
+      propertyPath: m_SpriteState.m_SelectedSprite
+      value: 
+      objectReference: {fileID: 5736100953419550330, guid: 619859ae09adcb84294f726277926278, type: 3}
+    - target: {fileID: 2028320220537416690, guid: f021aac017886b84e92c1a4fe4146288, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2087883790234009596}
@@ -2533,6 +2556,18 @@ PrefabInstance:
     - target: {fileID: 2904381725531108924, guid: f021aac017886b84e92c1a4fe4146288, type: 3}
       propertyPath: m_Name
       value: MainMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 7918880785238183791, guid: f021aac017886b84e92c1a4fe4146288, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7918880785238183791, guid: f021aac017886b84e92c1a4fe4146288, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7918880785238183791, guid: f021aac017886b84e92c1a4fe4146288, type: 3}
+      propertyPath: m_Color.r
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
