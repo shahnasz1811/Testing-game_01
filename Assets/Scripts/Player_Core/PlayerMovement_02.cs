@@ -20,7 +20,7 @@ public class PlayerMovement_02 : MonoBehaviour
     public bool IsJumping { get; private set; }
     public bool IsWallJumping { get; private set; }
     public bool IsSliding { get; private set; }
-    private bool _isGrounded; // NEW: true only while physically touching ground/enemy-ground THIS frame - no coyote grace. Used for movement acceleration so coyote time only affects jump eligibility, not run/air acceleration.
+    private bool _isGrounded; // true only while physically touching ground/enemy-ground THIS frame - no coyote grace. Used for movement acceleration so coyote time only affects jump eligibility, not run/air acceleration.
 
     // Timers
     public float LastOnGroundTime { get; private set; }
@@ -35,6 +35,15 @@ public class PlayerMovement_02 : MonoBehaviour
     private float _wallJumpStartTime;
     private int _lastWallJumpDir;
     private Vector2 _moveInput;
+
+    [Header("Input")]
+    // NEW: controller support settings
+    [Tooltip("Stick values smaller than this are ignored (fixes stick drift).")]
+    [SerializeField, Range(0f, 0.9f)] private float _stickDeadzone = 0.25f;
+    [Tooltip("ON: stick/keyboard/d-pad always give -1, 0 or 1 (classic platformer feel, matches your tuned run speed). OFF: partial stick tilt gives a slower walk.")]
+    [SerializeField] private bool _digitalMovement = true;
+    [Tooltip("How far down the stick must be pushed to trigger fast fall.")]
+    [SerializeField, Range(0.1f, 1f)] private float _fastFallThreshold = 0.6f;
 
     [Header("Checks")]
     [SerializeField] private Transform _groundCheckPoint;
@@ -98,17 +107,60 @@ public class PlayerMovement_02 : MonoBehaviour
 
     private void HandleInput()
     {
-        _moveInput.x = Input.GetAxisRaw("Horizontal");
-        _moveInput.y = Input.GetAxisRaw("Vertical");
+        // NEW: "Horizontal"/"Vertical" already include the left stick (joystick axes) in Unity's
+        // default Input Manager, alongside keyboard keys. We just clean the values up here.
+        float x = Input.GetAxisRaw("Horizontal");
+        float y = Input.GetAxisRaw("Vertical");
+
+        // NEW: d-pad (see note at the bottom of the file about setting up the d-pad axes).
+        // Safe to leave in even if those axes don't exist yet - see GetAxisSafe.
+        float dpadX = GetAxisSafe("DPadHorizontal");
+        float dpadY = GetAxisSafe("DPadVertical");
+        if (Mathf.Abs(dpadX) > Mathf.Abs(x)) x = dpadX;
+        if (Mathf.Abs(dpadY) > Mathf.Abs(y)) y = dpadY;
+
+        // NEW: deadzone so a drifting stick doesn't creep the character along
+        if (Mathf.Abs(x) < _stickDeadzone) x = 0f;
+        if (Mathf.Abs(y) < _stickDeadzone) y = 0f;
+
+        // NEW: optional snap to full speed so analog sticks feel like the keyboard
+        if (_digitalMovement)
+            x = Mathf.Sign(x) * (x != 0f ? 1f : 0f);
+
+        _moveInput.x = x;
+        _moveInput.y = y;
 
         if (_moveInput.x != 0)
             CheckDirectionToFace(_moveInput.x > 0);
 
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.J))
+        if (IsJumpDown())
             OnJumpInput();
 
-        if (Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J))
+        if (IsJumpUp())
             OnJumpUpInput();
+    }
+
+    // NEW: keyboard + controller jump buttons in one place.
+    // JoystickButton0 = A on Xbox, Cross on PlayStation (macOS/Linux), B on Switch Pro.
+    // JoystickButton1 is Cross on PlayStation controllers on Windows, so it's included too.
+    // Remove/add buttons here to taste.
+    private bool IsJumpDown()
+    {
+        return Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.J)
+            || Input.GetKeyDown(KeyCode.JoystickButton0) || Input.GetKeyDown(KeyCode.JoystickButton1);
+    }
+
+    private bool IsJumpUp()
+    {
+        return Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.C) || Input.GetKeyUp(KeyCode.J)
+            || Input.GetKeyUp(KeyCode.JoystickButton0) || Input.GetKeyUp(KeyCode.JoystickButton1);
+    }
+
+    // NEW: returns 0 instead of throwing if an axis hasn't been defined in the Input Manager.
+    private float GetAxisSafe(string axisName)
+    {
+        try { return Input.GetAxisRaw(axisName); }
+        catch (System.ArgumentException) { return 0f; }
     }
 
     private void HandleCollisions()
@@ -116,7 +168,7 @@ public class PlayerMovement_02 : MonoBehaviour
         if (IsJumping) return;
 
         // Ground Check
-        // NEW: _isGrounded reflects raw physical contact only (ignores coyote grace) - Run() uses this for acceleration.
+        // _isGrounded reflects raw physical contact only (ignores coyote grace) - Run() uses this for acceleration.
         // LastOnGroundTime keeps the coyote-time grace value, still used for jump eligibility (CanJump, etc).
         _isGrounded = Physics2D.OverlapBox(_groundCheckPoint.position, _groundCheckSize, 0, _groundLayer | _enemyGroundLayer);
         if (_isGrounded)
@@ -124,7 +176,7 @@ public class PlayerMovement_02 : MonoBehaviour
             LastOnGroundTime = Data.coyoteTime;
         }
 
-        // NEW: only evaluate wall checks while actually airborne. Previously these ran even
+        // Only evaluate wall checks while actually airborne. Previously these ran even
         // while standing on a platform, so a tall wall-check box could graze your own platform's
         // edge/corner and falsely arm LastOnWallRightTime/LeftTime. A jump pressed just after ground
         // coyote time expired would then fall through to CanWallJump() and fire a full-strength
@@ -197,7 +249,9 @@ public class PlayerMovement_02 : MonoBehaviour
         {
             SetGravityScale(0);
         }
-        else if (RB.linearVelocity.y < 0 && _moveInput.y < 0) // Fast Fall
+        // CHANGED: was `_moveInput.y < 0`. With an analog stick, a slight downward tilt would
+        // trigger fast fall, so it now needs a deliberate push past _fastFallThreshold.
+        else if (RB.linearVelocity.y < 0 && _moveInput.y < -_fastFallThreshold) // Fast Fall
         {
             SetGravityScale(Data.gravityScale * Data.fastFallGravityMult);
             RB.linearVelocity = new Vector2(RB.linearVelocity.x, Mathf.Max(RB.linearVelocity.y, -Data.maxFastFallSpeed));
@@ -230,9 +284,7 @@ public class PlayerMovement_02 : MonoBehaviour
         targetSpeed = Mathf.Lerp(RB.linearVelocity.x, targetSpeed, lerpAmount);
 
         float accelRate;
-        // CHANGED: was `LastOnGroundTime > 0` - that stayed true for the whole coyote window,
-        // so Run() applied full ground acceleration even while already airborne off a ledge,
-        // letting horizontal speed build up too much before a delayed coyote-time jump fired.
+        // Uses _isGrounded (not coyote time) so air acceleration applies as soon as you leave a ledge.
         if (_isGrounded)
             accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? Data.runAccelAmount : Data.runDeccelAmount;
         else
@@ -288,11 +340,8 @@ public class PlayerMovement_02 : MonoBehaviour
 
         Vector2 force = new Vector2(Data.wallJumpForce.x, Data.wallJumpForce.y) { x = Data.wallJumpForce.x * dir };
 
-        // CHANGED: unconditionally cancel existing horizontal velocity before adding the impulse,
-        // not just when it opposes the escape direction. Previously, if you were already moving the
-        // SAME way as the wall-jump direction, the impulse stacked on top of that existing velocity
-        // instead of replacing it (e.g. Run Max Speed 7 + Wall Jump Force X 7 = 14) - the "too far" bug.
-        // This guarantees a wall jump always launches at exactly Data.wallJumpForce.x, no more, no less.
+        // Unconditionally cancel existing horizontal velocity before adding the impulse so a wall jump
+        // always launches at exactly Data.wallJumpForce.x, no more, no less.
         force.x -= RB.linearVelocity.x;
 
         if (RB.linearVelocity.y < 0)
@@ -407,4 +456,15 @@ public class PlayerMovement_02 : MonoBehaviour
             Gizmos.DrawWireCube(_backWallCheckPoint.position, _wallCheckSize);
         }
     }
+
+    /*
+     * OPTIONAL D-PAD SETUP (Edit > Project Settings > Input Manager)
+     * The left stick and the A button work out of the box. To also use the d-pad, add 2 axes:
+     *
+     *   Name: DPadHorizontal   Type: Joystick Axis   Axis: 6th axis (Joysticks)   Dead: 0.2  Sensitivity: 1
+     *   Name: DPadVertical     Type: Joystick Axis   Axis: 7th axis (Joysticks)   Dead: 0.2  Sensitivity: 1  Invert: ON
+     *
+     * (Axis numbers are for Xbox controllers on Windows; they vary by OS and controller.
+     *  If the axes don't exist, GetAxisSafe just returns 0, so nothing breaks.)
+     */
 }
