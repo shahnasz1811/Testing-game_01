@@ -3390,6 +3390,7 @@ GameObject:
   - component: {fileID: 1794250149}
   - component: {fileID: 1794250148}
   - component: {fileID: 1794250152}
+  - component: {fileID: 1794250153}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -3504,6 +3505,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MenuControllerFocus
   firstSelected: {fileID: 1089193201}
   reselectIfLost: 1
+--- !u!114 &1794250153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794250147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75f203be7f2012a4ea1c026e3ce60f35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VerticalMenuNavigation
+  items:
+  - {fileID: 1423259311}
+  - {fileID: 1089193201}
+  - {fileID: 280046317}
+  - {fileID: 1090227087}
+  - {fileID: 469763795}
+  - {fileID: 1542449360}
+  sideButton: {fileID: 902963901}
+  wrapAround: 1
 --- !u!1 &1841296393
 GameObject:
   m_ObjectHideFlags: 0

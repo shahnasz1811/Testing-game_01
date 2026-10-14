@@ -2451,6 +2451,8 @@ GameObject:
   - component: {fileID: 1773108564}
   - component: {fileID: 1773108568}
   - component: {fileID: 1773108569}
+  - component: {fileID: 1773108571}
+  - component: {fileID: 1773108570}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -2572,6 +2574,56 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MenuControllerFocus
   firstSelected: {fileID: 1280372927}
   reselectIfLost: 1
+--- !u!114 &1773108570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773108563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75f203be7f2012a4ea1c026e3ce60f35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VerticalMenuNavigation
+  items:
+  - {fileID: 1280372927}
+  - {fileID: 1372280762}
+  - {fileID: 1436333387}
+  - {fileID: 148807246}
+  - {fileID: 1865070473}
+  sideButton: {fileID: 0}
+  wrapAround: 1
+--- !u!114 &1773108571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773108563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ScrollRect
+  m_Content: {fileID: 0}
+  m_Horizontal: 1
+  m_Vertical: 1
+  m_MovementType: 1
+  m_Elasticity: 0.1
+  m_Inertia: 1
+  m_DecelerationRate: 0.135
+  m_ScrollSensitivity: 1
+  m_Viewport: {fileID: 0}
+  m_HorizontalScrollbar: {fileID: 0}
+  m_VerticalScrollbar: {fileID: 0}
+  m_HorizontalScrollbarVisibility: 0
+  m_VerticalScrollbarVisibility: 0
+  m_HorizontalScrollbarSpacing: 0
+  m_VerticalScrollbarSpacing: 0
+  m_OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1789154614
 GameObject:
   m_ObjectHideFlags: 0

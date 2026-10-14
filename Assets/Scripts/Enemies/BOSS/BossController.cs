@@ -222,6 +222,19 @@ public class BossController : MonoBehaviour, ICrushable, IResettable
         // place for a stagger/flinch reaction that doesn't kill her outright.
     }
 
+    // Stops all shooting and wipes every bullet already in flight, WITHOUT
+    // defeating her. Called by BossFinisherCollectible the moment the player
+    // grabs the finisher, so nothing can hit them while they're frozen waiting
+    // for the rocks to drop. If the player dies afterwards, ResetState() below
+    // starts the attack loop again as normal.
+    public void CeaseFire()
+    {
+        if (spawner == null) return;
+
+        spawner.StopAllPatterns();
+        spawner.ClearActiveProjectiles();
+    }
+
     private void Defeat()
     {
         state = BossState.Defeated;

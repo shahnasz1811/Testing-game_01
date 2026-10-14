@@ -39,6 +39,10 @@ public class BossFinisherCollectible : MonoBehaviour, IResettable
     [Tooltip("How long to pause after collecting before the rocks release. Works even with no camera assigned (just a beat of stillness).")]
     [SerializeField] private float holdDuration = 1.2f;
 
+    [Header("Boss")]
+    [Tooltip("The boss to silence on pickup. Auto-found in the scene if left empty.")]
+    [SerializeField] private BossController boss;
+
     [Header("Pickup")]
     [SerializeField] private SpriteRenderer visual;      // auto-found on this object if left empty
     [SerializeField] private Collider2D triggerCollider; // auto-found on this object if left empty
@@ -49,6 +53,7 @@ public class BossFinisherCollectible : MonoBehaviour, IResettable
     {
         if (visual == null) visual = GetComponent<SpriteRenderer>();
         if (triggerCollider == null) triggerCollider = GetComponent<Collider2D>();
+        if (boss == null) boss = FindFirstObjectByType<BossController>();
     }
 
     private void Start()
@@ -73,6 +78,10 @@ public class BossFinisherCollectible : MonoBehaviour, IResettable
         // Hide/disable the pickup immediately so it can't be grabbed twice.
         if (visual != null) visual.enabled = false;
         if (triggerCollider != null) triggerCollider.enabled = false;
+
+        // Stop the boss shooting and delete every bullet in the air BEFORE the
+        // player is frozen, so nothing can hit them while they can't dodge.
+        if (boss != null) boss.CeaseFire();
 
         if (movement != null) movement.enabled = false;
         if (playerRb != null) playerRb.linearVelocity = Vector2.zero;
